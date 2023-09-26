@@ -1,0 +1,7 @@
+@import '../../vendor/filament/filament/resources/css/theme.css';
+@import "../../node_modules/leaflet/dist/leaflet.css";
+@import "../../node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css";
+
+.map-icon {
+    stroke: #dbeafe;
+}
