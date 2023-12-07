@@ -28,7 +28,7 @@ class MapPickerServiceProvider extends PackageServiceProvider
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command
                     ->publishConfigFile()
-                    ->askToStarRepoOnGitHub('dotswan/map-picker');
+                    ->askToStarRepoOnGitHub('dotswan/filament-map-picker');
             });
 
         $configFileName = $package->shortName();
@@ -69,7 +69,7 @@ class MapPickerServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'dotswan/map-picker';
+        return 'dotswan/filament-map-picker';
     }
 
     /**
@@ -78,9 +78,9 @@ class MapPickerServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('map-picker', __DIR__ . '/../resources/dist/components/map-picker.js'),
-            Css::make('map-picker-styles', __DIR__.'/../resources/dist/map-picker.css'),
-            Js::make('map-picker-scripts', __DIR__.'/../resources/dist/map-picker.js'),
+            // AlpineComponent::make('map-picker', __DIR__ . '/../resources/dist/components/filament-map-picker.js'),
+            Css::make('filament-map-picker-styles', __DIR__.'/../resources/dist/filament-map-picker.css'),
+            Js::make('filament-map-picker-scripts', __DIR__.'/../resources/dist/filament-map-picker.js'),
         ];
     }
 

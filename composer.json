@@ -1,15 +1,19 @@
 {
-    "name": "dotswan/map-picker",
+    "name": "dotswan/filament-map-picker",
     "description": "Easily pick and retrieve geo-coordinates using a map-based interface in your Filament applications.",
     "keywords": [
         "dotswan",
         "laravel",
-        "map-picker"
+        "map-picker",
+        "filament",
+        "filamentphp",
+        "filament-map-picker",
+        "filament-v3"
     ],
-    "homepage": "https://github.com/dotswan/map-picker",
+    "homepage": "https://github.com/dotswan/filament-map-picker",
     "support": {
-        "issues": "https://github.com/dotswan/map-picker/issues",
-        "source": "https://github.com/dotswan/map-picker"
+        "issues": "https://github.com/dotswan/filament-map-picker/issues",
+        "source": "https://github.com/dotswan/filament-map-picker"
     },
     "license": "MIT",
     "authors": [

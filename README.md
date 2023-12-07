@@ -40,7 +40,7 @@ Additional map options will be added to the package as needed and tested.
 You can easily install the package via Composer:
 
 ```bash
-composer require dotswan/map-picker
+composer require dotswan/filament-map-picker
 ```
 
 ## Basic Usage
@@ -111,18 +111,18 @@ If you have a suggestion that would make this better, please fork the repo and c
 5. Open a Pull Request
 
 
-[ico-version]: https://img.shields.io/packagist/v/dotswan/map-picker.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/dotswan/filament-map-picker.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/dotswan/map-picker.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/dotswan/filament-map-picker.svg?style=flat-square
 
-[link-workflow-test]: https://github.com/dotswan/map-picker/actions/workflows/ci.yml
-[link-packagist]: https://packagist.org/packages/dotswan/map-picker
-[link-license]: https://github.com/dotswan/map-picker/blob/master/LICENSE.md
-[link-downloads]: https://packagist.org/packages/dotswan/map-picker
-[link-readme]: https://github.com/dotswan/map-picker/blob/master/README.md
-[link-github-issue]: https://github.com/dotswan/map-picker/issues
-[link-docs]: https://github.com/dotswan/map-picker/blob/master/docs/openapi.yaml
-[link-composer-json]: https://github.com/dotswan/map-picker/blob/master/composer.json
-[link-gitignore]: https://github.com/dotswan/map-picker/blob/master/.gitignore
-[link-pint]: https://github.com/dotswan/map-picker/blob/master/pint.json
+[link-workflow-test]: https://github.com/dotswan/filament-map-picker/actions/workflows/ci.yml
+[link-packagist]: https://packagist.org/packages/dotswan/filament-map-picker
+[link-license]: https://github.com/dotswan/filament-map-picker/blob/master/LICENSE.md
+[link-downloads]: https://packagist.org/packages/dotswan/filament-map-picker
+[link-readme]: https://github.com/dotswan/filament-map-picker/blob/master/README.md
+[link-github-issue]: https://github.com/dotswan/filament-map-picker/issues
+[link-docs]: https://github.com/dotswan/filament-map-picker/blob/master/docs/openapi.yaml
+[link-composer-json]: https://github.com/dotswan/filament-map-picker/blob/master/composer.json
+[link-gitignore]: https://github.com/dotswan/filament-map-picker/blob/master/.gitignore
+[link-pint]: https://github.com/dotswan/filament-map-picker/blob/master/pint.json
 [link-author]: https://github.com/dotswan
