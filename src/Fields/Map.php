@@ -144,6 +144,17 @@ class Map extends Field implements MapOptions
     }
 
     /**
+     * Determine if it detects retina monitors or not.
+     * @param bool $detectRetina
+     * @return $this
+     */
+    public function detectRetina(bool $detectRetina = true): self
+    {
+        $this->mapConfig['detectRetina'] = $detectRetina;
+        return $this;
+    }
+
+    /**
      * Determine if zoom box is visible or not.
      * @param bool $show
      * @return $this
