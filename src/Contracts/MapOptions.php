@@ -20,6 +20,8 @@ interface MapOptions
 
     public function tilesUrl(string $url): self;
 
+    public function detectRetina(bool $detectRetina = true): self;
+
     public function showZoomControl(bool $show = true): self;
 
     public function showFullscreenControl(bool $show = true): self;

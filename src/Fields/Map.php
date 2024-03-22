@@ -29,7 +29,7 @@ class Map extends Field implements MapOptions
         'attribution'  => null,
         'zoomOffset'   => -1,
         'tileSize'     => 512,
-        'detectRetina' => false,
+        'detectRetina' => true,
         'minZoom'      => 0,
         'maxZoom'      => 28,
         'zoom'         => 15,
@@ -140,6 +140,17 @@ class Map extends Field implements MapOptions
     public function tilesUrl(string $url): self
     {
         $this->mapConfig['tilesUrl'] = $url;
+        return $this;
+    }
+
+    /**
+     * Determine if it detects retina monitors or not.
+     * @param bool $detectRetina
+     * @return $this
+     */
+    public function detectRetina(bool $detectRetina = true): self
+    {
+        $this->mapConfig['detectRetina'] = $detectRetina;
         return $this;
     }
 
