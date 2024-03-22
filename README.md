@@ -64,7 +64,7 @@ class FilamentResource extends Resource
             Map::make('location')
                     ->label('Location')
                     ->columnSpanFull()
-                    ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?array $state): void {
+                    ->afterStateUpdated(function (Get $get, Set $set, string|array|null $old, ?array $state): void {
                         $set('latitude', $state['lat']);
                         $set('longitude', $state['lng']);
                     })
