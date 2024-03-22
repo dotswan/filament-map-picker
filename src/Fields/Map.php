@@ -29,7 +29,7 @@ class Map extends Field implements MapOptions
         'attribution'  => null,
         'zoomOffset'   => -1,
         'tileSize'     => 512,
-        'detectRetina' => false,
+        'detectRetina' => true,
         'minZoom'      => 0,
         'maxZoom'      => 28,
         'zoom'         => 15,
