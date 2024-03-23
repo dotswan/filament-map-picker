@@ -5,3 +5,27 @@
 .map-icon {
     stroke: #dbeafe;
 }
+
+.map-location-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: #eee !important;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 23332;
+    color: #c83a3a;
+}
+
+.map-location-button svg {
+    width: 24px;
+    height: 24px;
+    fill: #333;
+}

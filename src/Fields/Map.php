@@ -35,6 +35,7 @@ class Map extends Field implements MapOptions
         'zoom'         => 15,
         'markerColor'  => '#3b82f6',
         'liveLocation' => false,
+        'showMyLocationButton' => false,
     ];
 
     /**
@@ -196,6 +197,17 @@ class Map extends Field implements MapOptions
     public function liveLocation(bool $send = true): self
     {
         $this->mapConfig['liveLocation'] = $send;
+        return $this;
+    }
+
+    /**
+     * Enable or disable show my location button on map.
+     * @param bool $showMyLocationButton
+     * @return $this
+     */
+    public function showMyLocationButton(bool $showMyLocationButton = true): self
+    {
+        $this->mapConfig['showMyLocationButton'] = $showMyLocationButton;
         return $this;
     }
 
