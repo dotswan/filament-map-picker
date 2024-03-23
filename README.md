@@ -77,7 +77,7 @@ class FilamentResource extends Resource
                     ->showFullscreenControl()
                     ->showZoomControl()
                     ->draggable()
-                    ->tilesUrl("http://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                    ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
                     ->zoom(15)
                     ->detectRetina()
                     ->extraTileControl([])
