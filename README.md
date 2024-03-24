@@ -92,6 +92,28 @@ class FilamentResource extends Resource
 }
 ```
 
+If you wish to update the map location and marker either through an action or after altering other input values, you can trigger a refresh of the map using the following approach:
+
+```php
+
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
+
+Actions::make([
+    Action::make('Set Default Location')
+        ->icon('heroicon-m-map-pin')
+        ->action(function (Set $set, $state, $livewire): void {
+            $set('location', ['lat' => '52.35510989541003', 'lng' => '4.883422851562501']);
+            $set('latitude', '52.35510989541003');
+            $set('longitude', '4.883422851562501');
+            $livewire->dispatch('refreshMap');
+        })
+])->verticalAlignment(VerticalAlignment::Start);
+
+```
+
+
 ## License
 
 [MIT License](LICENSE.md) © Dotswan
