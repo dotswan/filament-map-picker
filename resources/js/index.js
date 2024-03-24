@@ -129,11 +129,7 @@ document.addEventListener('alpine:init', () => {
                         await this.map.flyTo(currentPosition);
                         
                         this.updateLocation();
-
-                        if (this.config.showMarker === true) {
-                            await this.marker.setLatLng(currentPosition);
-                            setTimeout(()=> this.updateLocation(),500);
-                        }
+                        this.updateMarker();
                         
                     }, error => {
                         console.error('Error fetching current location:', error);
@@ -153,6 +149,17 @@ document.addEventListener('alpine:init', () => {
             init:function(){
                 this.$wire = $wire;
                 this.config = mapConfig
+                $wire.on('refreshMap', this.refreshMap.bind(this));
+            },
+            updateMarker:function(){
+                if (this.config.showMarker === true) {
+                    this.marker.setLatLng(this.getCoordinates());
+                    setTimeout(()=> this.updateLocation(),500);
+                }
+            },
+            refreshMap() {
+                this.map.flyTo(this.getCoordinates());
+                this.updateMarker();
             }
         }
     });
