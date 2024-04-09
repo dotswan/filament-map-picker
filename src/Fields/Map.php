@@ -53,6 +53,8 @@ class Map extends Field implements MapOptions
         'fullscreenControl' => true,
     ];
 
+    private array $extraStyle = [];
+
     /**
      * Extra leaflet controls variables
      * @var array
@@ -73,6 +75,16 @@ class Map extends Field implements MapOptions
         );
     }
 
+
+    /**
+     * Create extra styles string
+     * @return string
+     */
+    public function getExtraStyle(): string
+    {
+        return implode(';', $this->extraStyle);
+    }
+
     /**
      * Determine if user can drag map around or not.
      * @param bool $draggable
@@ -84,6 +96,18 @@ class Map extends Field implements MapOptions
         $this->mapConfig['draggable'] = $draggable;
         return $this;
     }
+
+    /**
+     * Set extra style
+     * @param array $styles
+     * @return self
+     */
+    public function extraStyles(array $styles = []): self
+    {
+        $this->extraStyle = $styles;
+        return $this;
+    }
+
 
     /**
      * Set default zoom
