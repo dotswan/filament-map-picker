@@ -6,7 +6,7 @@
         } while (!$refs.map);
         attach($refs.map);
     }" wire:ignore>
-        <div x-ref="map" class="w-full" style="min-height: 30vh; z-index: 1 !important;">
+        <div x-ref="map" class="w-full" style="min-height: 30vh; z-index: 1 !important; {{ $getExtraStyle() }}">
         </div>
     </div>
 </x-filament-forms::field-wrapper>

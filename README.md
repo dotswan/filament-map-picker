@@ -71,6 +71,10 @@ class FilamentResource extends Resource
                     ->afterStateHydrated(function ($state, $record, Set $set): void {
                         $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
                     })
+                    ->extraStyles([
+                        'min-height: 150vh',
+                        'border-radius: 50px'
+                    ])
                     ->liveLocation()
                     ->showMarker()
                     ->markerColor("#22c55eff")
