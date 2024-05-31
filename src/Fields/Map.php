@@ -17,6 +17,11 @@ class Map extends Field implements MapOptions
      */
     public string $view = 'map-picker::fields.osm-map-picker';
 
+    protected $defaultLocation = [
+        'lat' => 0 ,
+        'lng' => 0
+    ];
+
     /**
      * Main field config variables
      * @var array
@@ -84,6 +89,22 @@ class Map extends Field implements MapOptions
     {
         return implode(';', $this->extraStyle);
     }
+
+
+    /**
+     * Add default location
+     * @return self
+     */
+    public function default(mixed $location): self
+    {
+        $this->defaultLocation = [
+            'lat' => $location['lat'] ?? 0,
+            'lng' => $location['lng'] ?? 0,
+        ];
+
+        return $this;
+    }
+
 
     /**
      * Determine if user can drag map around or not.
@@ -265,6 +286,6 @@ class Map extends Field implements MapOptions
     protected function setUp(): void
     {
         parent::setUp();
-        $this->default(['lat' => 0, 'lng' => 0]);
+        $this->default(['lat' => $this->defaultLocation['lat'], 'lng' => $this->defaultLocation['lng']]);
     }
 }
