@@ -2,16 +2,17 @@ import * as L from 'leaflet';
 import 'leaflet-fullscreen';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('mapPicker', ($wire, mapConfig) => {
+    Alpine.data('mapPicker', ($wire, mapConfig,state) => {
         return {
             config:{},
             $wire:{},
             map: null,
             tile: null,
             marker: null,
+            state: null,
             createMap: function (el) {
                 const that = this;
-
+               
                 this.map = L.map(el, this.config?.controls);
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
@@ -55,7 +56,7 @@ document.addEventListener('alpine:init', () => {
                     that.map.setZoom(this.config?.controls?.zoom);
                 });
 
-                let location = this.getCoordinates();
+                let location = this.state ?? this.getCoordinates();
                 if (!location?.lat && !location?.lng) {
                     this.map.locate({
                         setView: true,
@@ -98,10 +99,18 @@ document.addEventListener('alpine:init', () => {
                 this.map = null;
             },
             getCoordinates: function () {
-                let location = this.$wire.get(this?.config?.statePath);
-                if (location === null || !location?.hasOwnProperty('lat')) {
-                    location = {lat: 40.4168, lng: -3.7038};
+                let location = this.$wire.get(this?.config?.statePath) ?? {};
+        
+                const hasValidCoordinates = location.hasOwnProperty('lat') && location.hasOwnProperty('lng') &&
+                    location.lat !== null && location.lng !== null;
+
+                if (!hasValidCoordinates) {
+                    location = {
+                        lat: this.config?.default?.lat,
+                        lng: this.config?.default?.lng
+                    };
                 }
+             
                 return location;
             },
             attach: function (el) {
@@ -149,6 +158,7 @@ document.addEventListener('alpine:init', () => {
             init:function(){
                 this.$wire = $wire;
                 this.config = mapConfig
+                this.state = state
                 $wire.on('refreshMap', this.refreshMap.bind(this));
             },
             updateMarker:function(){

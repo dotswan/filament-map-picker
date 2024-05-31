@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Dotswan\MapPicker\Fields;
+namespace Dotswan\MapPicker\Infolists;
 
-use Filament\Forms\Components\Field;
+use Filament\Infolists\Components\Entry;
 use Dotswan\MapPicker\Contracts\MapOptions;
-use Filament\Forms\Concerns\HasStateBindingModifiers;
+use Closure;
 
-class Map extends Field implements MapOptions
+class MapEntry extends Entry implements MapOptions
 {
-    use HasStateBindingModifiers;
     /**
      * Field view
      * @var string
      */
-    public string $view = 'map-picker::fields.osm-map-picker';
+    public string $view = 'map-picker::infolists.osm-map-entry';
 
     /**
      * Main field config variables
@@ -101,10 +100,10 @@ class Map extends Field implements MapOptions
 
 
 
-    public function defaultLocation(int|float $latitude, float|int $longitude): self
+    public function defaultLocation(Closure|array $location): self
     {
-        $this->mapConfig['default']['lat'] = $latitude;
-        $this->mapConfig['default']['lng'] = $longitude;
+        $this->mapConfig['default']['lat'] = $location['lat'];
+        $this->mapConfig['default']['lng'] = $location['lng'];
 
         return $this;
     }
