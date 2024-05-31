@@ -121,6 +121,37 @@ Actions::make([
 
 ```
 
+### Usage As Infolist Field
+
+The MapEntry Infolist field displays a map.
+
+```php
+
+use Dotswan\MapPicker\Infolists\MapEntry;
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                MapEntry::make('location')
+                    ->extraStyles([
+                        'min-height: 50vh',
+                        'border-radius: 50px'
+                    ])
+                    ->state(fn ($record) => ['lat' => $record?->latitude, 'lng' => $record?->longitude])
+                    ->showMarker()
+                    ->markerColor("#22c55eff")
+                    ->showFullscreenControl()
+                    ->draggable(false)
+                    ->zoom(15),
+
+                .....
+            ]);
+    }
+
+```
+<hr/>
+
 
 ## Usage Guide for Handling Map Locations
 
