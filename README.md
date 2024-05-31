@@ -64,7 +64,11 @@ class FilamentResource extends Resource
             Map::make('location')
                     ->label('Location')
                     ->columnSpanFull()
-                    ->afterStateUpdated(function (Get $get, Set $set, string|array|null $old, ?array $state): void {
+                    ->default([
+                        'lat' => 40.4168,
+                        'lng' => -3.7038
+                    ])
+                    ->afterStateUpdated(function (Set $set, ?array $state): void {
                         $set('latitude', $state['lat']);
                         $set('longitude', $state['lng']);
                     })
@@ -116,6 +120,74 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::Start);
 
 ```
+
+
+## Usage Guide for Handling Map Locations
+
+This section explains how to handle and display map locations within your application using this package.
+
+**Step 1: Define Your Database Schema**
+
+Ensure your database table includes latitude and longitude columns. 
+This is essential for storing the coordinates of your locations. You can define your table schema as follows:
+
+```php
+$table->double('latitude')->nullable();
+$table->double('longitude')->nullable();
+```
+
+**Step 2: Retrieve and Set Coordinates**
+
+When loading a record, ensure you correctly retrieve and set the latitude and longitude values. 
+Use the following method within your form component:
+
+```php
+->afterStateHydrated(function ($state, $record, Set $set): void {
+    $set('location', ['lat' => $record?->latitude, 'lng' => $record?->longitude]);
+})
+```
+
+**Step 3: Add Form Fields for Latitude and Longitude**
+
+Add hidden form fields for latitude and longitude to your form. This ensures the values are present but not visible to the user:
+
+```php
+TextInput::make('latitude')
+    ->hiddenLabel()
+    ->hidden(),
+
+TextInput::make('longitude')
+    ->hiddenLabel()
+    ->hidden()
+```
+
+If you prefer to display these values in a read-only format, replace `hidden()` with `readOnly()`.
+
+### Alternative Approach: Using a Single Location Attribute
+
+If you prefer to handle the location as a single field, you can define a custom attribute in your model. This method avoids the need for separate latitude and longitude columns:
+
+```php
+class YourModel extends Model
+{
+    protected function location(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => [
+                'latitude' => $attributes['latitude'],
+                'longitude' => $attributes['longitude']
+            ],
+            set: fn (array $value) => [
+                'latitude' => $value['latitude'],
+                'longitude' => $value['longitude']
+            ],
+        );
+    }
+}
+```
+
+This approach encapsulates both latitude and longitude within a single location attribute, streamlining your code.
+
 
 
 ## License
