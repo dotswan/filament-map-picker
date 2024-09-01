@@ -1,5 +1,7 @@
 import * as L from 'leaflet';
 import 'leaflet-fullscreen';
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 document.addEventListener('DOMContentLoaded', () => {
     const mapPicker = ($wire, config, state) => {
@@ -30,6 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     zoomOffset: config.zoomOffset,
                     detectRetina: config.detectRetina,
                 }).addTo(this.map);
+
+                this.map.pm.addControls({  
+                    position: 'topleft',  
+                    drawCircleMarker: false,
+                    rotateMode: false,
+                  }); 
+
+                
+                this.map.on('pm:create', function(e) {
+                    $wire.call('handle_pm_create', e.layer.toGeoJSON());
+                });
 
                 if (config.showMarker) {
                     const markerColor = config.markerColor || "#3b82f6";

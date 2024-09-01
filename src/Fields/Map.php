@@ -279,4 +279,9 @@ class Map extends Field implements MapOptions
     {
         parent::setUp();
     }
+
+    public function handle_pm_create($geoJson)
+    {
+        ddd($geoJson);
+    }
 }
