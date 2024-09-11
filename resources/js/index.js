@@ -68,6 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (config.showMyLocationButton) {
                     this.addLocationButton();
                 }
+
+                if (config.liveLocation.send && config.liveLocation.realtime) {
+                    setInterval(() => {
+                        this.fetchCurrentLocation();
+                    }, config.liveLocation.miliseconds);
+                }
             },
             updateLocation: function() {
                 let coordinates = this.getCoordinates();
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat)) {
                     $wire.set(config.statePath, this.map.getCenter(), false);
 
-                    if (config.liveLocation) {
+                    if (config.liveLocation.send) {
                         $wire.$refresh();
                     }
                 }
