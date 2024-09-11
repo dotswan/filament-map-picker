@@ -22,21 +22,21 @@ class Map extends Field implements MapOptions
      * @var array
      */
     private array $mapConfig = [
-        'statePath' => '',
-        'draggable' => true,
-        'showMarker' => true,
-        'tilesUrl' => 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'attribution' => null,
-        'zoomOffset' => -1,
-        'tileSize' => 512,
-        'detectRetina' => true,
-        'minZoom' => 0,
-        'maxZoom' => 28,
-        'zoom' => 15,
-        'markerColor' => '#3b82f6',
-        'liveLocation' => false,
-        'showMyLocationButton' => false,
-        'default' => ['lat' => 0, 'lng' => 0]
+        'statePath'            => '',
+        'draggable'            => true,
+        'showMarker'           => true,
+        'tilesUrl'             => 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'attribution'          => null,
+        'zoomOffset'           => -1,
+        'tileSize'             => 512,
+        'detectRetina'         => true,
+        'minZoom'              => 0,
+        'maxZoom'              => 28,
+        'zoom'                 => 15,
+        'markerColor'          => '#3b82f6',
+        'liveLocation'         => false,
+        'showMyLocationButton' => [false, false, 5000],
+        'default'              => ['lat' => 0 , 'lng' => 0]
     ];
 
     /**
@@ -44,13 +44,13 @@ class Map extends Field implements MapOptions
      * @var array
      */
     private array $controls = [
-        'zoomControl' => true,
-        'scrollWheelZoom' => 'center',
-        'doubleClickZoom' => 'center',
-        'touchZoom' => 'center',
-        'minZoom' => 1,
-        'maxZoom' => 28,
-        'zoom' => 15,
+        'zoomControl'       => true,
+        'scrollWheelZoom'   => 'center',
+        'doubleClickZoom'   => 'center',
+        'touchZoom'         => 'center',
+        'minZoom'           => 1,
+        'maxZoom'           => 28,
+        'zoom'              => 15,
         'fullscreenControl' => true,
     ];
 
