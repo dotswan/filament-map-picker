@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setView: true,
                         maxZoom: config.controls.maxZoom,
                         enableHighAccuracy: true,
-                        watch: false // this can be used to update the map in real time but works kinda weird
+                        watch: false
                     });
                 } else {
                     this.map.setView(new L.LatLng(location.lat, location.lng));
