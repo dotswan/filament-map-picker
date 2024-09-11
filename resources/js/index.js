@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setView: true,
                         maxZoom: config.controls.maxZoom,
                         enableHighAccuracy: true,
-                        watch: false
+                        watch: false // this can be used to update the map in real time but works kinda weird
                     });
                 } else {
                     this.map.setView(new L.LatLng(location.lat, location.lng));
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let coordinates = this.getCoordinates();
                 let currentCenter = this.map.getCenter();
 
-                if (config.draggable && 
+                if ( //config.draggable && 
                     (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat)) {
                     $wire.set(config.statePath, this.map.getCenter(), false);
 
@@ -154,6 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.config = config;
                 this.state = state;
                 $wire.on('refreshMap', this.refreshMap.bind(this));
+
+                // if (config.) {
+                //     this.map.dragging.disable();
+                // }
             },
             updateMarker: function() {
                 if (config.showMarker) {
