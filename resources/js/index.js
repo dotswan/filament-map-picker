@@ -79,8 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let coordinates = this.getCoordinates();
                 let currentCenter = this.map.getCenter();
 
-                if ( //config.draggable && 
-                    (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat)) {
+                if (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat) {
                     $wire.set(config.statePath, this.map.getCenter(), false);
 
                     if (config.liveLocation.send) {
@@ -160,10 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.config = config;
                 this.state = state;
                 $wire.on('refreshMap', this.refreshMap.bind(this));
-
-                // if (config.) {
-                //     this.map.dragging.disable();
-                // }
             },
             updateMarker: function() {
                 if (config.showMarker) {
