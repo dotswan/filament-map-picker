@@ -32,5 +32,5 @@ interface MapOptions
 
     public function markerColor(string $color): self;
 
-    public function liveLocation(bool $send = false): self;
+    public function liveLocation(bool $send = false, bool $realtime = false, int $miliseconds = 5000): self;
 }

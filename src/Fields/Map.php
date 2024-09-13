@@ -35,7 +35,7 @@ class Map extends Field implements MapOptions
         'zoom'                 => 15,
         'markerColor'          => '#3b82f6',
         'liveLocation'         => false,
-        'showMyLocationButton' => false,
+        'showMyLocationButton' => [false, false, 5000],
         'default'              => ['lat' => 0 , 'lng' => 0]
     ];
 
@@ -71,7 +71,7 @@ class Map extends Field implements MapOptions
         return json_encode(
             array_merge($this->mapConfig, [
                 'statePath' => $this->getStatePath(),
-                'controls'  => array_merge($this->controls, $this->extraControls)
+                'controls' => array_merge($this->controls, $this->extraControls)
             ])
         );
     }
@@ -231,9 +231,13 @@ class Map extends Field implements MapOptions
      * @param bool $send
      * @return $this
      */
-    public function liveLocation(bool $send = true): self
+    public function liveLocation(bool $send = true, bool $realtime = false, int $miliseconds = 5000): self
     {
-        $this->mapConfig['liveLocation'] = $send;
+        $this->mapConfig['liveLocation'] = [
+            'send' => $send,
+            'realtime' => $realtime,
+            'miliseconds' => $miliseconds
+        ];
         return $this;
     }
 

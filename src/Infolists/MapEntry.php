@@ -33,7 +33,7 @@ class MapEntry extends Entry implements MapOptions
         'maxZoom'              => 28,
         'zoom'                 => 15,
         'markerColor'          => '#3b82f6',
-        'liveLocation'         => false,
+        'liveLocation'         => [false, false, 5000],
         'showMyLocationButton' => false,
         'default'              => ['lat' => 0 , 'lng' => 0]
     ];
@@ -230,9 +230,13 @@ class MapEntry extends Entry implements MapOptions
      * @param bool $send
      * @return $this
      */
-    public function liveLocation(bool $send = true): self
+    public function liveLocation(bool $send = true, bool $realtime = false, int $miliseconds = 5000): self
     {
-        $this->mapConfig['liveLocation'] = $send;
+        $this->mapConfig['liveLocation'] = [
+            'send' => $send,
+            'realtime' => $realtime,
+            'miliseconds' => $miliseconds
+        ];
         return $this;
     }
 

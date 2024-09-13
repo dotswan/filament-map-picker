@@ -79,7 +79,7 @@ class FilamentResource extends Resource
                         'min-height: 150vh',
                         'border-radius: 50px'
                     ])
-                    ->liveLocation()
+                    ->liveLocation(true, true, 5000)
                     ->showMarker()
                     ->markerColor("#22c55eff")
                     ->showFullscreenControl()
@@ -119,6 +119,23 @@ Actions::make([
         })
 ])->verticalAlignment(VerticalAlignment::Start);
 
+```
+
+#### `liveLocation` Option
+
+The `liveLocation` method accepts three parameters:
+
+1. **`bool $send`:** Determines if the user's live location should be sent.
+2. **`bool $realtime`:** Controls whether the live location should be sent to the server periodically.
+3. **`int $milliseconds`:** Sets the interval (in milliseconds) at which the user's location is updated and sent to the server.
+
+Example:
+
+```php
+Map::make('location')
+    ->liveLocation(true, true, 10000)  // Updates live location every 10 seconds
+    ->showMarker()
+    ->draggable()
 ```
 
 ### Usage As Infolist Field
