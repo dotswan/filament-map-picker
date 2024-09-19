@@ -64,10 +64,7 @@ class FilamentResource extends Resource
             Map::make('location')
                     ->label('Location')
                     ->columnSpanFull()
-                    ->default([
-                        'lat' => 40.4168,
-                        'lng' => -3.7038
-                    ])
+                    ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
                         $set('latitude', $state['lat']);
                         $set('longitude', $state['lng']);
