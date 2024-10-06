@@ -1,5 +1,7 @@
 import * as L from 'leaflet';
 import 'leaflet-fullscreen';
+import "@geoman-io/leaflet-geoman-free";
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const mapPicker = ($wire, config, state) => {
@@ -7,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
             map: null,
             tile: null,
             marker: null,
+            drawItems: null,
+
             createMap: function (el) {
                 const that = this;
 
@@ -74,19 +78,150 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.fetchCurrentLocation();
                     }, config.liveLocation.miliseconds);
                 }
+
+                // Geoman setup
+                if (config.geoMan.show) {
+                        this.map.pm.addControls({  
+                            position: config.geoMan.position,  
+                            drawCircleMarker: config.geoMan.drawCircleMarker,
+                            rotateMode: config.geoMan.rotateMode,
+                            drawMarker: config.geoMan.drawMarker,
+                            drawPolygon: config.geoMan.drawPolygon,
+                            drawPolyline: config.geoMan.drawPolyline,
+                            drawCircle: config.geoMan.drawCircle,
+                            editMode: config.geoMan.editMode,
+                            dragMode: config.geoMan.dragMode,
+                            cutPolygon: config.geoMan.cutPolygon,
+                            editPolygon: config.geoMan.editPolygon,
+                            deleteLayer: config.geoMan.deleteLayer 
+                        });
+
+                        this.drawItems = new L.FeatureGroup().addTo(this.map);
+
+                        this.map.on('pm:create', (e) => {
+                            if (e.layer && e.layer.pm) {
+                                e.layer.pm.enable();
+                                this.drawItems.addLayer(e.layer);
+                                this.updateGeoJson();
+                            }
+                        });
+
+                        this.map.on('pm:edit', () => {
+                            this.updateGeoJson();
+                        });
+
+                        this.map.on('pm:remove', (e) => {
+                            try {
+                                this.drawItems.removeLayer(e.layer);
+                                this.updateGeoJson();
+                            } catch (error) {
+                                console.error("Error during removal of layer:", error);
+                            }
+                        });
+
+                    // Load existing GeoJSON if available
+                    const existingGeoJson = this.getGeoJson();
+                    if (existingGeoJson) {
+                            this.drawItems = L.geoJSON(existingGeoJson, {
+                                pointToLayer: (feature, latlng) => {
+                                    return L.circleMarker(latlng, {
+                                        radius: 15,
+                                        color: '#3388ff',
+                                        fillColor: '#3388ff',
+                                        fillOpacity: 0.6
+                                    });
+                                },
+                                style: function(feature) {
+                                    if (feature.geometry.type === 'Polygon') {
+                                        return {
+                                            color: config.geoMan.color || "#3388ff",
+                                            fillColor: config.geoMan.filledColor || 'blue',
+                                            weight: 2,
+                                            fillOpacity: 0.4   
+                                        };
+                                    }
+                                },
+                                onEachFeature: (feature, layer) => {
+     
+                                    if (feature.geometry.type === 'Polygon') {
+                                        layer.bindPopup("Polygon Area");
+                                    } else if (feature.geometry.type === 'Point') {
+                                        layer.bindPopup("Point Location");
+                                    }
+                                    
+                   
+                                    if (config.geoMan.editable) {
+                                        if (feature.geometry.type === 'Polygon') {
+                                            layer.pm.enable({
+                                                allowSelfIntersection: false
+                                            });
+                                        } else if (feature.geometry.type === 'Point') {
+                                            layer.pm.enable({
+                                                draggable: true
+                                            });
+                                        }
+                                    }
+                        
+                                    layer.on('pm:edit', () => {
+                                        this.updateGeoJson();
+                                    });
+                                }
+                            }).addTo(this.map);
+
+                            if(config.geoMan.editable){
+                                // Enable editing for each layer
+                                this.drawItems.eachLayer(layer => {
+                                    layer.pm.enable({
+                                        allowSelfIntersection: false,
+                                    });
+                                });
+                            }
+                            
+                            this.map.fitBounds(this.drawItems.getBounds());
+                    }
+              }
             },
+
+            updateGeoJson: function() {
+                try {
+                    const geoJsonData = this.drawItems.toGeoJSON();
+                    if (typeof geoJsonData !== 'object') {
+                        console.error("GeoJSON data is not an object:", geoJsonData);
+                        return;
+                    }
+
+                    $wire.set(config.statePath, {
+                        ...$wire.get(config.statePath),
+                        geojson: geoJsonData
+                    }, true);
+
+                } catch (error) {
+                    console.error("Error updating GeoJSON:", error);
+                }
+            },
+
+            getGeoJson: function() {
+                const state = $wire.get(config.statePath) ?? {};
+                return state.geojson;
+            },
+
             updateLocation: function() {
                 let coordinates = this.getCoordinates();
                 let currentCenter = this.map.getCenter();
 
                 if (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat) {
-                    $wire.set(config.statePath, this.map.getCenter(), false);
+                    $wire.set(config.statePath, {
+                        ...$wire.get(config.statePath),
+                        lat: currentCenter.lat,
+                        lng: currentCenter.lng
+                    }, false);
 
                     if (config.liveLocation.send) {
                         $wire.$refresh();
                     }
                 }
             },
+
             removeMap: function (el) {
                 if (this.marker) {
                     this.marker.remove();
@@ -98,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.map.remove();
                 this.map = null;
             },
+
             getCoordinates: function () {
                 let location = $wire.get(config.statePath) ?? {};
 
@@ -113,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 return location;
             },
+
             attach: function (el) {
                 this.createMap(el);
                 const observer = new IntersectionObserver(entries => {
@@ -131,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 observer.observe(el);
             },
+
             fetchCurrentLocation: function () {
                 if ('geolocation' in navigator) {
                     navigator.geolocation.getCurrentPosition(async position => {
@@ -146,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Geolocation is not supported by this browser.');
                 }
             },
+
             addLocationButton: function() {
                 const locationButton = document.createElement('button');
                 locationButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 0C8.25 0 5 3.25 5 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.75-3.25-7-7-7zm0 10c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm0-5c-1.11 0-2 .89-2 2s.89 2 2 2 2-.89 2-2-.89-2-2-2z"/></svg>';
@@ -154,18 +293,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 locationButton.onclick = () => this.fetchCurrentLocation();
                 this.map.getContainer().appendChild(locationButton);
             },
+
             init: function() {
                 this.$wire = $wire;
                 this.config = config;
                 this.state = state;
                 $wire.on('refreshMap', this.refreshMap.bind(this));
             },
+
             updateMarker: function() {
                 if (config.showMarker) {
                     this.marker.setLatLng(this.getCoordinates());
                     setTimeout(() => this.updateLocation(), 500);
                 }
             },
+
             refreshMap: function() {
                 this.map.flyTo(this.getCoordinates());
                 this.updateMarker();
