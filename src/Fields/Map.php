@@ -36,7 +36,24 @@ class Map extends Field implements MapOptions
         'markerColor'          => '#3b82f6',
         'liveLocation'         => false,
         'showMyLocationButton' => [false, false, 5000],
-        'default'              => ['lat' => 0 , 'lng' => 0]
+        'default'              => ['lat' => 0 , 'lng' => 0],
+        'geoMan'               => [
+            'show'                  =>  false,
+            'editable'              =>  true,
+            'position'              =>  'topleft',
+            'drawCircleMarker'      =>  true,
+            'rotateMode'            =>  true,
+            'drawMarker'            =>  true,
+            'drawPolygon'           =>  true,
+            'drawPolyline'          =>  true,
+            'drawCircle'            =>  true,
+            'dragMode'              =>  true,
+            'cutPolygon'            =>  true,
+            'editPolygon'           =>  true,
+            'deleteLayer'           =>  true,
+            'color'                 =>  '#3388ff',
+            'filledColor'           =>  '#cad9ec'
+        ]
     ];
 
     /**
@@ -271,6 +288,175 @@ class Map extends Field implements MapOptions
     public function extraTileControl(array $control): self
     {
         $this->mapConfig = array_merge($this->mapConfig, $control);
+        return $this;
+    }
+
+
+    /**
+     * Enable or disable GeoMan functionality.
+     * @param bool $show
+     * @return $this
+     */
+    public function geoMan(bool $show = true): self
+    {
+        $this->mapConfig['geoMan']['show'] = $show;
+        return $this;
+    }
+
+
+    /**
+     * Enable or disable GeoMan edit mode.
+     * @param bool $show
+     * @return $this
+     */
+    public function geoManEditable(bool $show = true): self
+    {
+        $this->mapConfig['geoMan']['editable'] = $show;
+        return $this;
+    }
+
+    /**
+     * Set GeoMan control position.
+     * @param string $position
+     * @return $this
+     * @note Valid values: 'topleft', 'topright', 'bottomleft', 'bottomright'
+     */
+    public function geoManPosition(string $position = 'topleft'): self
+    {
+        $this->mapConfig['geoMan']['position'] = $position;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of circle markers.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawCircleMarker(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawCircleMarker'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable rotate mode.
+     * @param bool $rotate
+     * @return $this
+     */
+    public function rotateMode(bool $rotate = true): self
+    {
+        $this->mapConfig['geoMan']['rotateMode'] = $rotate;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of markers.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawMarker(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawMarker'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of polygons.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawPolygon(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawPolygon'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of polylines.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawPolyline(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawPolyline'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of circles.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawCircle(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawCircle'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable editing of polygons.
+     * @param bool $edit
+     * @return $this
+     */
+    public function editPolygon(bool $edit = true): self
+    {
+        $this->mapConfig['geoMan']['editPolygon'] = $edit;
+        return $this;
+    }
+
+    /**
+     * Enable or disable deletion of layers.
+     * @param bool $delete
+     * @return $this
+     */
+    public function deleteLayer(bool $delete = true): self
+    {
+        $this->mapConfig['geoMan']['deleteLayer'] = $delete;
+        return $this;
+    }
+
+
+    /**
+     * Enable or disable drag mode.
+     * @param bool $enable
+     * @return $this
+     */
+    public function dragMode(bool $enable = true): self
+    {
+        $this->mapConfig['geoMan']['dragMode'] = $enable;
+        return $this;
+    }
+
+    /**
+     * Enable or disable polygon cutting.
+     * @param bool $enable
+     * @return $this
+     */
+    public function cutPolygon(bool $enable = true): self
+    {
+        $this->mapConfig['geoMan']['cutPolygon'] = $enable;
+        return $this;
+    }
+
+    /**
+     * Set the stroke color for drawings.
+     * @param string $color
+     * @return $this
+     */
+    public function setColor(string $color): self
+    {
+        $this->mapConfig['geoMan']['color'] = $color;
+        return $this;
+    }
+
+    /**
+     * Set the fill color for drawings.
+     * @param string $filledColor
+     * @return $this
+     */
+    public function setFilledColor(string $filledColor): self
+    {
+        $this->mapConfig['geoMan']['filledColor'] = $filledColor;
         return $this;
     }
 

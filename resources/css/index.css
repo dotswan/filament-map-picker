@@ -1,5 +1,6 @@
 @import "../../node_modules/leaflet/dist/leaflet.css";
 @import "../../node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css";
+@import "../../node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 .map-icon {
     stroke: #dbeafe;
