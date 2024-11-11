@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         that.setCoordinates(e.latlng);
                     });
                 }
-                console.log('clickable',config);
 
                 this.tile = L.tileLayer(config.tilesUrl, {
                     attribution: config.attribution,
