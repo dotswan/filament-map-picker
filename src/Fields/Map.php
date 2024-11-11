@@ -35,8 +35,9 @@ class Map extends Field implements MapOptions
         'zoom'                 => 15,
         'markerColor'          => '#3b82f6',
         'liveLocation'         => false,
+        'bounds'               => false,
         'showMyLocationButton' => [false, false, 5000],
-        'default'              => ['lat' => 0 , 'lng' => 0],
+        'default'              => ['lat' => 0, 'lng' => 0],
         'geoMan'               => [
             'show'                  =>  false,
             'editable'              =>  true,
@@ -116,6 +117,46 @@ class Map extends Field implements MapOptions
         return $this;
     }
 
+
+    /**
+     * Prevents the map from panning outside the defined box, and sets
+     * a default location in the center of the box. It makes sense to
+     * use this with a minimum zoom that suits the size of your map and
+     * the size of the box or the way it pans back to the bounding box
+     * looks strange. You can call with $on set to false to undo this.
+     *
+     * @param boolean $on
+     * @param int|float $southWestLat
+     * @param int|float $southWestLng
+     * @param int|float $northEastLat
+     * @param int|float $northEastLng
+     * @return self
+     */
+    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
+    {
+        if (!$on) {
+            $this->mapConfig['boundaries'] = false;
+
+            return $this;
+        }
+
+        $this->mapConfig['bounds']['sw'] = ['lat' => $southWestLat, 'lng' => $southWestLng];
+        $this->mapConfig['bounds']['ne'] = ['lat' => $northEastLat, 'lng' => $northEastLng];
+        $this->defaultLocation(($southWestLat + $northEastLat) / 2.0, ($southWestLng + $northEastLng) / 2.0);
+
+        return $this;
+    }
+
+    /**
+     * Convenience function for appropriate values for boundaries() when
+     * you want the British Isles
+     * @return self
+     **/
+    public function setBoundsToBritishIsles(): self
+    {
+        $this->boundaries(true, 49.5, -11, 61, 2);
+        return $this;
+    }
 
 
     public function defaultLocation(int|float $latitude, float|int $longitude): self

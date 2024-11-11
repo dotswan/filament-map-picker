@@ -15,6 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const that = this;
 
                 this.map = L.map(el, config.controls);
+
+                if(config.bounds)
+                {
+                    let southWest = L.latLng(config.bounds.sw.lat, config.bounds.sw.lng);
+                    let northEast = L.latLng(config.bounds.ne.lat, config.bounds.ne.lng);
+                    let bounds = L.latLngBounds(southWest, northEast);
+                    this.map.setMaxBounds(bounds);
+                    this.map.fitBounds(bounds);
+                    this.map.on('drag', function() {
+                        map.panInsideBounds(bounds, { animate: false });
+                    });
+                }
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
                     if (config.showMarker) {
@@ -81,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Geoman setup
                 if (config.geoMan.show) {
-                        this.map.pm.addControls({  
-                            position: config.geoMan.position,  
+                        this.map.pm.addControls({
+                            position: config.geoMan.position,
                             drawCircleMarker: config.geoMan.drawCircleMarker,
                             rotateMode: config.geoMan.rotateMode,
                             drawMarker: config.geoMan.drawMarker,
@@ -93,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             dragMode: config.geoMan.dragMode,
                             cutPolygon: config.geoMan.cutPolygon,
                             editPolygon: config.geoMan.editPolygon,
-                            deleteLayer: config.geoMan.deleteLayer 
+                            deleteLayer: config.geoMan.deleteLayer
                         });
 
                         this.drawItems = new L.FeatureGroup().addTo(this.map);
@@ -137,19 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                             color: config.geoMan.color || "#3388ff",
                                             fillColor: config.geoMan.filledColor || 'blue',
                                             weight: 2,
-                                            fillOpacity: 0.4   
+                                            fillOpacity: 0.4
                                         };
                                     }
                                 },
                                 onEachFeature: (feature, layer) => {
-     
+
                                     if (feature.geometry.type === 'Polygon') {
                                         layer.bindPopup("Polygon Area");
                                     } else if (feature.geometry.type === 'Point') {
                                         layer.bindPopup("Point Location");
                                     }
-                                    
-                   
+
+
                                     if (config.geoMan.editable) {
                                         if (feature.geometry.type === 'Polygon') {
                                             layer.pm.enable({
@@ -161,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             });
                                         }
                                     }
-                        
+
                                     layer.on('pm:edit', () => {
                                         this.updateGeoJson();
                                     });
@@ -176,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     });
                                 });
                             }
-                            
+
                             this.map.fitBounds(this.drawItems.getBounds());
                     }
               }
