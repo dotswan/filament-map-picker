@@ -89,8 +89,8 @@ class Map extends Field implements MapOptions
     public function getMapConfig(): string
     {
         $statePath = $this->getStatePath();
-        $lastDotPosition = strrpos($statePath, '.');
-        $rangeSelectField = substr($statePath, 0, $lastDotPosition + 1) . $this->mapConfig['rangeSelectField'];
+        $lastDotPosition = mb_strrpos($statePath, '.');
+        $rangeSelectField = mb_substr($statePath, 0, $lastDotPosition + 1).$this->mapConfig['rangeSelectField'];
         return json_encode(
             array_merge($this->mapConfig, [
                 'statePath' => $statePath,
@@ -150,7 +150,7 @@ class Map extends Field implements MapOptions
      */
     public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
     {
-        if (!$on) {
+        if ( ! $on) {
             $this->mapConfig['boundaries'] = false;
 
             return $this;
@@ -260,7 +260,7 @@ class Map extends Field implements MapOptions
      * Use the value of another field on the form for the range of the
      * circle surrounding the marker
      * @param string $rangeSelectField,
-     * @param return $this
+     * return $this
      **/
     public function rangeSelectField(string $rangeSelectField): self
     {
