@@ -12,11 +12,11 @@ A custom field for Filament that allows you to effortlessly select a location on
 
 ![image](https://github.com/user-attachments/assets/53d9de27-7e1f-4638-8c71-3b2c6b5d68ef)
 
-## Introduction 
+## Introduction
 
 Map Picker is a Filament custom field designed to simplify the process of choosing a location on a map and obtaining its geo-coordinates.
 
-* Features include: 
+* Features include:
    * A Field for Filament-v3 with OpenStreetMap Integration
    * Receive Real-time Coordinates Upon Marker Movement Completion
    * Tailor Controls and Marker Appearance to Your Preferences
@@ -89,7 +89,7 @@ class FilamentResource extends Resource
                         })
                         ->afterStateHydrated(function ($state, $record, Set $set): void {
                             $set('location', [
-                                    'lat'     => $record->latitude, 
+                                    'lat'     => $record->latitude,
                                     'lng'     => $record->longitude,
                                     'geojson' => json_decode(strip_tags($record->description))
                                 ]
@@ -168,6 +168,32 @@ Map::make('location')
     ->draggable()
 ```
 
+### boundaries Option
+
+The idea here is that you can set a boundary box by defining two points, the southwest most point and the north east
+most point, and your map will pan back into the panned area if you drag away, such that the points can only be selected
+if you stay in the map.
+
+You will want to set the minZoom() along with this if you set showZoomControl(true). To choose a good value for minZoom()
+you will need to consider both the size of the map on the screen and the size of the bounding boxm, and you may find trial and
+error is the best method.
+
+```php
+Map::make('location')
+    ->showMarker()
+    ->boundaries(true,49,11.1,61.0,2.1)
+    ->draggable()
+```
+
+To turn it off again - possibly a strange use case - `boundaries(false)` is what you want.
+
+
+### setBoundsToBritishIsles Option
+
+This is a convenience function that uses the boundaries option above, setting the boundary box to
+(49.5,-11) and (61,2)
+
+
 ## Options Table
 
 Here's a table describing all available options and their default values:
@@ -242,7 +268,7 @@ This section explains how to handle and display map locations within your applic
 
 **Step 1: Define Your Database Schema**
 
-Ensure your database table includes latitude and longitude columns. 
+Ensure your database table includes latitude and longitude columns.
 This is essential for storing the coordinates of your locations. You can define your table schema as follows:
 
 ```php
@@ -252,7 +278,7 @@ $table->double('longitude')->nullable();
 
 **Step 2: Retrieve and Set Coordinates**
 
-When loading a record, ensure you correctly retrieve and set the latitude and longitude values. 
+When loading a record, ensure you correctly retrieve and set the latitude and longitude values.
 Use the following method within your form component:
 
 ```php
