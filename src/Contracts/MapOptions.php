@@ -8,6 +8,10 @@ interface MapOptions
 {
     public function getMapConfig(): string;
 
+    public function clickable(bool $clickable): self;
+
+    public function rangeSelectField(string $rangeSelectField): self;
+
     public function draggable(bool $draggable = true): self;
 
     public function zoom(int $zoom): self;

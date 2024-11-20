@@ -12,11 +12,11 @@ A custom field for Filament that allows you to effortlessly select a location on
 
 ![image](https://github.com/user-attachments/assets/53d9de27-7e1f-4638-8c71-3b2c6b5d68ef)
 
-## Introduction 
+## Introduction
 
 Map Picker is a Filament custom field designed to simplify the process of choosing a location on a map and obtaining its geo-coordinates.
 
-* Features include: 
+* Features include:
    * A Field for Filament-v3 with OpenStreetMap Integration
    * Receive Real-time Coordinates Upon Marker Movement Completion
    * Tailor Controls and Marker Appearance to Your Preferences
@@ -89,7 +89,7 @@ class FilamentResource extends Resource
                         })
                         ->afterStateHydrated(function ($state, $record, Set $set): void {
                             $set('location', [
-                                    'lat'     => $record->latitude, 
+                                    'lat'     => $record->latitude,
                                     'lng'     => $record->longitude,
                                     'geojson' => json_decode(strip_tags($record->description))
                                 ]
@@ -114,6 +114,7 @@ class FilamentResource extends Resource
                         ->geoManPosition('topleft')
                         ->drawCircleMarker()
                         ->rotateMode()
+                        ->clickable() //click to move marker
                         ->drawMarker()
                         ->drawPolygon()
                         ->drawPolyline()
@@ -150,6 +151,52 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::Start);
 
 ```
+
+### clickable Option
+
+This will allow you to set the point on the map with a click. Default behaviour has the marker centered as the map is
+dragged underneath. You could, with this, keep the map still and lock the zoom and choose to click to place the marker.
+```php
+```
+Map::make('location')
+  ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+  ->showMarker(true)
+  ->clickable(true)
+  ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+  ->zoom(12)
+```
+```
+
+### rangeSelectField Option
+
+The rangeSelectField Option allows you to specify another field on your form which specifies a range from the point
+identified by the marker.  That field must be in meters. So for example you could do this:
+
+```php
+Fieldset::make('Location')
+    ->schema([
+        Select::make('membership_distance')
+            ->enum(MembershipDistance::class)
+            ->options(MembershipDistance::class)
+            ->required(),
+
+        Map::make('location')
+            ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+            ->showMarker(true)
+            ->showFullscreenControl(false)
+            ->showZoomControl()
+            ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+            ->zoom(12)
+            ->detectRetina()
+            ->rangeSelectField('membership_distance')
+            ->setFilledColor('#cad9ec'),
+    ])
+    ->columns(1),
+```
+
+In this case, as you change the value on the Select a circle of that radius centered on the marker will
+change to match your drop down.
+
 
 #### `liveLocation` Option
 
@@ -242,7 +289,7 @@ This section explains how to handle and display map locations within your applic
 
 **Step 1: Define Your Database Schema**
 
-Ensure your database table includes latitude and longitude columns. 
+Ensure your database table includes latitude and longitude columns.
 This is essential for storing the coordinates of your locations. You can define your table schema as follows:
 
 ```php
@@ -252,7 +299,7 @@ $table->double('longitude')->nullable();
 
 **Step 2: Retrieve and Set Coordinates**
 
-When loading a record, ensure you correctly retrieve and set the latitude and longitude values. 
+When loading a record, ensure you correctly retrieve and set the latitude and longitude values.
 Use the following method within your form component:
 
 ```php
