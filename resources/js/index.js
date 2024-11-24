@@ -335,6 +335,8 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             setMarkerRange: function () {
+                if(!this.rangeSelectField)
+                    return ;
                 distance=parseInt(this.rangeSelectField.value || 0 ) ;
                 if (this.rangeCircle) {
                     this.rangeCircle.setLatLng(this.getCoordinates()).setRadius(distance);
@@ -354,7 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.state = state;
                 this.rangeSelectField = document.getElementById(config.rangeSelectField || 'data.distance');
                 let that=this
-                this.rangeSelectField.addEventListener('change', function () {that.updateMarker(); });
+                if(this.rangeSelectField){
+                    this.rangeSelectField.addEventListener('change', function () {that.updateMarker(); });
+                }
                 $wire.on('refreshMap', this.refreshMap.bind(this));
             },
 
