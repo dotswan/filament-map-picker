@@ -12,8 +12,24 @@ interface MapOptions
 
     public function rangeSelectField(string $rangeSelectField): self;
 
+    public function getExtraStyle(): string;
+
     public function draggable(bool $draggable = true): self;
 
+    public function clickable(bool $clickable): self;
+
+    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self;
+
+    public function setBoundsToBritishIsles(): self;
+
+    public function defaultLocation(int|float $latitude, float|int $longitude): self;
+
+    public function extraStyles(array $styles = []): self;
+
+    public function rangeSelectField(string $rangeSelectField): self;
+
+    public function drawCircleMarker(bool $draw = true): self;
+    
     public function zoom(int $zoom): self;
 
     public function maxZoom(int $maxZoom): self;
@@ -23,6 +39,8 @@ interface MapOptions
     public function showMarker(bool $show = true): self;
 
     public function tilesUrl(string $url): self;
+
+    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self;
 
     public function detectRetina(bool $detectRetina = true): self;
 
@@ -37,4 +55,34 @@ interface MapOptions
     public function markerColor(string $color): self;
 
     public function liveLocation(bool $send = false, bool $realtime = false, int $miliseconds = 5000): self;
+
+    public function showMyLocationButton(bool $showMyLocationButton = true): self;
+
+    public function geoMan(bool $show = true): self;
+
+    public function geoManEditable(bool $show = true): self;
+
+    public function geoManPosition(string $position = 'topleft'): self;
+
+    public function rotateMode(bool $rotate = true): self;
+
+    public function drawMarker(bool $draw = true): self;
+
+    public function drawPolygon(bool $draw = true): self;
+
+    public function drawPolyline(bool $draw = true): self;
+
+    public function drawCircle(bool $draw = true): self;
+
+    public function editPolygon(bool $edit = true): self;
+
+    public function deleteLayer(bool $delete = true): self;
+
+    public function dragMode(bool $enable = true): self;
+
+    public function cutPolygon(bool $enable = true): self;
+
+    public function setColor(string $color): self;
+
+    public function setFilledColor(string $filledColor): self;
 }

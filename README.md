@@ -215,6 +215,32 @@ Map::make('location')
     ->draggable()
 ```
 
+### boundaries Option
+
+The idea here is that you can set a boundary box by defining two points, the southwest most point and the north east
+most point, and your map will pan back into the panned area if you drag away, such that the points can only be selected
+if you stay in the map.
+
+You will want to set the minZoom() along with this if you set showZoomControl(true). To choose a good value for minZoom()
+you will need to consider both the size of the map on the screen and the size of the bounding boxm, and you may find trial and
+error is the best method.
+
+```php
+Map::make('location')
+    ->showMarker()
+    ->boundaries(true,49,11.1,61.0,2.1)
+    ->draggable()
+```
+
+To turn it off again - possibly a strange use case - `boundaries(false)` is what you want.
+
+
+### setBoundsToBritishIsles Option
+
+This is a convenience function that uses the boundaries option above, setting the boundary box to
+(49.5,-11) and (61,2)
+
+
 ## Options Table
 
 Here's a table describing all available options and their default values:

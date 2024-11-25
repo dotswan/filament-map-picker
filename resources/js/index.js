@@ -17,6 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const that = this;
 
                 this.map = L.map(el, config.controls);
+
+                if(config.bounds)
+                {
+                    let southWest = L.latLng(config.bounds.sw.lat, config.bounds.sw.lng);
+                    let northEast = L.latLng(config.bounds.ne.lat, config.bounds.ne.lng);
+                    let bounds = L.latLngBounds(southWest, northEast);
+                    this.map.setMaxBounds(bounds);
+                    this.map.fitBounds(bounds);
+                    this.map.on('drag', function() {
+                        map.panInsideBounds(bounds, { animate: false });
+                    });
+                }
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
                     if (config.showMarker) {
