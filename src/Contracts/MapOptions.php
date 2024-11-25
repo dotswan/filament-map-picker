@@ -36,6 +36,8 @@ interface MapOptions
 
     public function tilesUrl(string $url): self;
 
+    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self;
+
     public function detectRetina(bool $detectRetina = true): self;
 
     public function showZoomControl(bool $show = true): self;
