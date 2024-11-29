@@ -114,6 +114,7 @@ class FilamentResource extends Resource
                         ->geoManPosition('topleft')
                         ->drawCircleMarker()
                         ->rotateMode()
+                        ->clickable() //click to move marker
                         ->drawMarker()
                         ->drawPolygon()
                         ->drawPolyline()
@@ -150,6 +151,52 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::Start);
 
 ```
+
+### clickable Option
+
+This will allow you to set the point on the map with a click. Default behaviour has the marker centered as the map is
+dragged underneath. You could, with this, keep the map still and lock the zoom and choose to click to place the marker.
+```php
+```
+Map::make('location')
+  ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+  ->showMarker(true)
+  ->clickable(true)
+  ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+  ->zoom(12)
+```
+```
+
+### rangeSelectField Option
+
+The rangeSelectField Option allows you to specify another field on your form which specifies a range from the point
+identified by the marker.  That field must be in meters. So for example you could do this:
+
+```php
+Fieldset::make('Location')
+    ->schema([
+        Select::make('membership_distance')
+            ->enum(MembershipDistance::class)
+            ->options(MembershipDistance::class)
+            ->required(),
+
+        Map::make('location')
+            ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+            ->showMarker(true)
+            ->showFullscreenControl(false)
+            ->showZoomControl()
+            ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+            ->zoom(12)
+            ->detectRetina()
+            ->rangeSelectField('membership_distance')
+            ->setFilledColor('#cad9ec'),
+    ])
+    ->columns(1),
+```
+
+In this case, as you change the value on the Select a circle of that radius centered on the marker will
+change to match your drop down.
+
 
 #### `liveLocation` Option
 
