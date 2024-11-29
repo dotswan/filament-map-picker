@@ -100,10 +100,10 @@ class MapEntry extends Entry implements MapOptions
 
 
 
-    public function defaultLocation(Closure|array $location): self
+    public function defaultLocation(int|float $latitude, float|int $longitude): self
     {
-        $this->mapConfig['default']['lat'] = $location['lat'];
-        $this->mapConfig['default']['lng'] = $location['lng'];
+        $this->mapConfig['default']['lat'] = $latitude;
+        $this->mapConfig['default']['lng'] = $longitude;
 
         return $this;
     }
@@ -157,6 +157,7 @@ class MapEntry extends Entry implements MapOptions
         return $this;
     }
 
+    
     /**
      * Determine if marker is visible or not.
      * @param bool $show
@@ -273,6 +274,229 @@ class MapEntry extends Entry implements MapOptions
         return $this;
     }
 
+    /**
+     * Determines if the user can click to place the marker on the map.
+     * @param bool $clickable
+     * @return $this
+     */
+    public function clickable(bool $clickable): self
+    {
+        $this->mapConfig['clickable'] = $clickable;
+        return $this;
+    }
+
+    /**
+     * Prevents the map from panning outside the defined box, and sets
+     * a default location in the center of the box.
+     * @param boolean $on
+     * @param int|float $southWestLat
+     * @param int|float $southWestLng
+     * @param int|float $northEastLat
+     * @param int|float $northEastLng
+     * @return self
+     */
+    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
+    {
+        if (!$on) {
+            $this->mapConfig['boundaries'] = false;
+            return $this;
+        }
+
+        $this->mapConfig['bounds']['sw'] = ['lat' => $southWestLat, 'lng' => $southWestLng];
+        $this->mapConfig['bounds']['ne'] = ['lat' => $northEastLat, 'lng' => $northEastLng];
+        $this->defaultLocation(($southWestLat + $northEastLat) / 2.0, ($southWestLng + $northEastLng) / 2.0);
+
+        return $this;
+    }
+
+    /**
+     * Convenience function for appropriate values for boundaries() when
+     * you want the British Isles
+     * @return self
+     **/
+    public function setBoundsToBritishIsles(): self
+    {
+        $this->boundaries(true, 49.5, -11, 61, 2);
+        return $this;
+    }
+
+    /**
+     * Use the value of another field on the form for the range of the
+     * circle surrounding the marker
+     * @param string $rangeSelectField
+     * @return $this
+     **/
+    public function rangeSelectField(string $rangeSelectField): self
+    {
+        $this->mapConfig['rangeSelectField'] = $rangeSelectField;
+        return $this;
+    }
+
+    /**
+     * Enable or disable GeoMan functionality.
+     * @param bool $show
+     * @return $this
+     */
+    public function geoMan(bool $show = true): self
+    {
+        $this->mapConfig['geoMan']['show'] = $show;
+        return $this;
+    }
+
+    /**
+     * Enable or disable GeoMan edit mode.
+     * @param bool $show
+     * @return $this
+     */
+    public function geoManEditable(bool $show = true): self
+    {
+        $this->mapConfig['geoMan']['editable'] = $show;
+        return $this;
+    }
+
+    /**
+     * Set GeoMan control position.
+     * @param string $position
+     * @return $this
+     * @note Valid values: 'topleft', 'topright', 'bottomleft', 'bottomright'
+     */
+    public function geoManPosition(string $position = 'topleft'): self
+    {
+        $this->mapConfig['geoMan']['position'] = $position;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of circle markers.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawCircleMarker(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawCircleMarker'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable rotate mode.
+     * @param bool $rotate
+     * @return $this
+     */
+    public function rotateMode(bool $rotate = true): self
+    {
+        $this->mapConfig['geoMan']['rotateMode'] = $rotate;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of markers.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawMarker(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawMarker'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of polygons.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawPolygon(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawPolygon'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of polylines.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawPolyline(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawPolyline'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of circles.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawCircle(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawCircle'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable editing of polygons.
+     * @param bool $edit
+     * @return $this
+     */
+    public function editPolygon(bool $edit = true): self
+    {
+        $this->mapConfig['geoMan']['editPolygon'] = $edit;
+        return $this;
+    }
+
+    /**
+     * Enable or disable deletion of layers.
+     * @param bool $delete
+     * @return $this
+     */
+    public function deleteLayer(bool $delete = true): self
+    {
+        $this->mapConfig['geoMan']['deleteLayer'] = $delete;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drag mode.
+     * @param bool $enable
+     * @return $this
+     */
+    public function dragMode(bool $enable = true): self
+    {
+        $this->mapConfig['geoMan']['dragMode'] = $enable;
+        return $this;
+    }
+
+    /**
+     * Enable or disable polygon cutting.
+     * @param bool $enable
+     * @return $this
+     */
+    public function cutPolygon(bool $enable = true): self
+    {
+        $this->mapConfig['geoMan']['cutPolygon'] = $enable;
+        return $this;
+    }
+
+    /**
+     * Set the stroke color for drawings.
+     * @param string $color
+     * @return $this
+     */
+    public function setColor(string $color): self
+    {
+        $this->mapConfig['geoMan']['color'] = $color;
+        return $this;
+    }
+
+    /**
+     * Set the fill color for drawings.
+     * @param string $filledColor
+     * @return $this
+     */
+    public function setFilledColor(string $filledColor): self
+    {
+        $this->mapConfig['geoMan']['filledColor'] = $filledColor;
+        return $this;
+    }
 
     /**
      * Setup function

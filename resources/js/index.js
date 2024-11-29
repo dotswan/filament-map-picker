@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+import * as LF from 'leaflet';
 import 'leaflet-fullscreen';
 import "@geoman-io/leaflet-geoman-free";
 
@@ -16,13 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
             createMap: function (el) {
                 const that = this;
 
-                this.map = L.map(el, config.controls);
+                this.map = LF.map(el, config.controls);
 
                 if(config.bounds)
                 {
-                    let southWest = L.latLng(config.bounds.sw.lat, config.bounds.sw.lng);
-                    let northEast = L.latLng(config.bounds.ne.lat, config.bounds.ne.lng);
-                    let bounds = L.latLngBounds(southWest, northEast);
+                    let southWest = LF.latLng(config.bounds.sw.lat, config.bounds.sw.lng);
+                    let northEast = LF.latLng(config.bounds.ne.lat, config.bounds.ne.lng);
+                    let bounds = LF.latLngBounds(southWest, northEast);
                     this.map.setMaxBounds(bounds);
                     this.map.fitBounds(bounds);
                     this.map.on('drag', function() {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                this.tile = L.tileLayer(config.tilesUrl, {
+                this.tile = LF.tileLayer(config.tilesUrl, {
                     attribution: config.attribution,
                     minZoom: config.minZoom,
                     maxZoom: config.maxZoom,
@@ -58,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (config.showMarker) {
                     const markerColor = config.markerColor || "#3b82f6";
-                    const svgIcon = L.divIcon({
+                    const svgIcon = LF.divIcon({
                         html: `<svg xmlns="http://www.w3.org/2000/svg" class="map-icon" fill="${markerColor}" width="36" height="36" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>`,
                         className: "",
                         iconSize: [36, 36],
                         iconAnchor: [18, 36],
                     });
-                    this.marker = L.marker([0, 0], {
+                    this.marker = LF.marker([0, 0], {
                         icon: svgIcon,
                         draggable: false,
                         autoPan: true
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         watch: false
                     });
                 } else {
-                    this.map.setView(new L.LatLng(location.lat, location.lng));
+                    this.map.setView(new LF.LatLng(location.lat, location.lng));
                 }
 
                 if (config.showMyLocationButton) {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             deleteLayer: config.geoMan.deleteLayer
                         });
 
-                        this.drawItems = new L.FeatureGroup().addTo(this.map);
+                        this.drawItems = new LF.FeatureGroup().addTo(this.map);
 
                         this.map.on('pm:create', (e) => {
                             if (e.layer && e.layer.pm) {
@@ -147,9 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Load existing GeoJSON if available
                     const existingGeoJson = this.getGeoJson();
                     if (existingGeoJson) {
-                            this.drawItems = L.geoJSON(existingGeoJson, {
+                            this.drawItems = LF.geoJSON(existingGeoJson, {
                                 pointToLayer: (feature, latlng) => {
-                                    return L.circleMarker(latlng, {
+                                    return LF.circleMarker(latlng, {
                                         radius: 15,
                                         color: '#3388ff',
                                         fillColor: '#3388ff',
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchCurrentLocation: function () {
                 if ('geolocation' in navigator) {
                     navigator.geolocation.getCurrentPosition(async position => {
-                        const currentPosition = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                        const currentPosition = new LF.LatLng(position.coords.latitude, position.coords.longitude);
                         await this.map.flyTo(currentPosition);
 
                         this.updateLocation();
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (this.rangeCircle) {
                     this.rangeCircle.setLatLng(this.getCoordinates()).setRadius(distance);
                 } else {
-                    this.rangeCircle = L.circle(this.getCoordinates(), {
+                    this.rangeCircle = LF.circle(this.getCoordinates(), {
                         color: 'blue',
                         fillColor: '#f03',
                         fillOpacity: 0.5,

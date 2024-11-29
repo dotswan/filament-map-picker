@@ -7,7 +7,8 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-        <div x-data="mapPicker($wire, {{ $getMapConfig() }})" x-init="async () => {
+        <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
+            x-init="async () => {
             do {
                 await (new Promise(resolve => setTimeout(resolve, 100)));
             } while (!$refs.map);
