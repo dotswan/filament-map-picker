@@ -1,7 +1,6 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
 
-    <div x-data="mapPicker($wire, {{ $getMapConfig() }}, @js($getState()))" 
-        x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('filament-map-picker-scripts'))]"
+    <div x-data="mapPicker($wire, {{ $getMapConfig() }}, @js($getState()))"
         x-init="async () => {
             do {
                 await (new Promise(resolve => setTimeout(resolve, 100)));

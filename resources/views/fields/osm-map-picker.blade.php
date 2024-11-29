@@ -7,8 +7,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-        <div x-data="mapPicker($wire, {{ $getMapConfig() }})" 
-            x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('filament-map-picker-scripts'))]"
+        <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
             x-init="async () => {
             do {
                 await (new Promise(resolve => setTimeout(resolve, 100)));

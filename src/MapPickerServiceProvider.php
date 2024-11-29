@@ -80,7 +80,7 @@ class MapPickerServiceProvider extends PackageServiceProvider
         return [
             // AlpineComponent::make('map-picker', __DIR__ . '/../resources/dist/components/filament-map-picker.js'),
             Css::make('filament-map-picker-styles', __DIR__.'/../resources/dist/filament-map-picker.css'),
-            Js::make('filament-map-picker-scripts', __DIR__.'/../resources/dist/filament-map-picker.js')->loadedOnRequest(),
+            Js::make('filament-map-picker-scripts', __DIR__.'/../resources/dist/filament-map-picker.js'),
         ];
     }
 
