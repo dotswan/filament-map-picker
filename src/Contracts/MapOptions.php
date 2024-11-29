@@ -8,17 +8,11 @@ interface MapOptions
 {
     public function getMapConfig(): string;
 
-    public function clickable(bool $clickable): self;
-
-    public function rangeSelectField(string $rangeSelectField): self;
-
     public function getExtraStyle(): string;
 
     public function draggable(bool $draggable = true): self;
 
     public function clickable(bool $clickable): self;
-
-    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self;
 
     public function setBoundsToBritishIsles(): self;
 
