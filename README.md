@@ -156,8 +156,8 @@ Actions::make([
 
 This will allow you to set the point on the map with a click. Default behaviour has the marker centered as the map is
 dragged underneath. You could, with this, keep the map still and lock the zoom and choose to click to place the marker.
+
 ```php
-```
 Map::make('location')
   ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
   ->showMarker(true)
@@ -165,7 +165,7 @@ Map::make('location')
   ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
   ->zoom(12)
 ```
-```
+
 
 ### rangeSelectField Option
 
