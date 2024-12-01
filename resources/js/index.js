@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat) {
                     $wire.set(config.statePath, {
                         ...$wire.get(config.statePath),
-                        lat: currentCenter.lat,
-                        lng: currentCenter.lng
+                        lat: coordinates?.lat || currentCenter.lat,
+                        lng: coordinates?.lng || currentCenter.lng
                     }, false);
 
                     if (config.liveLocation.send) {
