@@ -235,10 +235,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 let currentCenter = this.map.getCenter();
 
                 if (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat) {
+
+                    let coordinateStateEmpty = !coordinates?.lat && !coordinates?.lng;
+
                     $wire.set(config.statePath, {
                         ...$wire.get(config.statePath),
-                        lat: coordinates?.lat || currentCenter.lat,
-                        lng: coordinates?.lng || currentCenter.lng
+                        lat: coordinateStateEmpty ? currentCenter.lat : coordinates?.lat,
+                        lng: coordinateStateEmpty ? currentCenter.lng : coordinates?.lng
                     }, false);
 
                     if (config.liveLocation.send) {
