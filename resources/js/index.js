@@ -32,11 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
-                    if (config.showMarker) {
-                        if(!config.clickable)
-                        {
-                            this.marker.setLatLng(this.map.getCenter());
-                        }
+                    
+                    if (config.showMarker && !config.clickable) {
+                        this.marker.setLatLng(this.map.getCenter());
                     }
                 });
 
@@ -231,26 +229,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
             },
-            setFormRestorationState: function (coords,zoom ) {
-                if(!coords)
-                {
-                    coords=this.getFormRestorationState();
-                    if(!coords) {
-                        coords=this.getCoordinates();
-                    }
+            setFormRestorationState: function(coords = null, zoom = null) {
+
+                coords = coords || this.getFormRestorationState() || this.getCoordinates();
+            
+                if (this.map) {
+                    coords.zoom = zoom ?? this.map.getZoom();
                 }
-                if(this.map)
-                {
-                    if(!zoom)
-                    {
-                        coords.zoom=this.map.getZoom();
-                    }
-                    else
-                    {
-                        coords.zoom=zoom;
-                    }
-                }
-                this.formRestorationHiddenInput.value=JSON.stringify(coords);
+            
+                this.formRestorationHiddenInput.value = JSON.stringify(coords);
             },
             getFormRestorationState: function () {
                 if(this.formRestorationHiddenInput.value)
@@ -375,22 +362,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.map.getContainer().appendChild(locationButton);
             },
 
-            setMarkerRange: function () {
-                if(config.clickable && !this.marker)
-                    return ;
-                if(!this.rangeSelectField)
-                    return ;
-                distance=parseInt(this.rangeSelectField.value || 0 ) ;
-                if (this.rangeCircle) {
-                    this.rangeCircle.setLatLng(this.getCoordinates()).setRadius(distance);
-                } else {
-                    this.rangeCircle = LF.circle(this.getCoordinates(), {
-                        color: 'blue',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5,
-                        radius: distance // The radius in meters
-                    }).addTo(this.map);
+            setMarkerRange: function() {
+
+                if ((config.clickable && !this.marker) || !this.rangeSelectField) {
+                    return;
                 }
+            
+                const distance = parseInt(this.rangeSelectField.value || 0);
+                const coordinates = this.getCoordinates();
+                const circleStyle = {
+                    color: 'blue',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5,
+                    radius: distance
+                };
+                
+                if (this.rangeCircle) {
+                    this.rangeCircle
+                        .setLatLng(coordinates)
+                        .setRadius(distance);
+                    return;
+                }
+                
+                this.rangeCircle = LF.circle(coordinates, circleStyle).addTo(this.map);
             },
 
             init: function() {
