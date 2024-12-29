@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rangeCircle: null,
             drawItems: null,
             rangeSelectField: null,
+            formRestorationHiddenInput:null,
 
             createMap: function (el) {
                 const that = this;
@@ -32,7 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
                     if (config.showMarker) {
-                        this.marker.setLatLng(this.map.getCenter());
+                        if(!config.clickable)
+                        {
+                            this.marker.setLatLng(this.map.getCenter());
+                        }
                     }
                 });
 
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         iconSize: [36, 36],
                         iconAnchor: [18, 36],
                     });
-                    this.marker = LF.marker([0, 0], {
+                    this.marker = LF.marker(this.getCoordinates(), {
                         icon: svgIcon,
                         draggable: false,
                         autoPan: true
@@ -76,13 +80,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                this.map.on('moveend', () => setTimeout(() => this.updateLocation(), 500));
+                if(!config.clickable)
+                {
+                    this.map.on('moveend', () => setTimeout(() => this.updateLocation(), 500));
+                }
 
                 this.map.on('locationfound', function () {
                     that.map.setZoom(config.controls.zoom);
                 });
 
-                let location = state ?? this.getCoordinates();
+                let location = this.getCoordinates();
                 if (!location.lat && !location.lng) {
                     this.map.locate({
                         setView: true,
@@ -103,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.fetchCurrentLocation();
                     }, config.liveLocation.miliseconds);
                 }
+                this.map.on('zoomend',function(event) {
+                    that.setFormRestorationState(false, that.map.getZoom());
+                });
 
                 // Geoman setup
                 if (config.geoMan.show) {
@@ -206,7 +216,47 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
               }
             },
+            initFormRestoration: function () {
+                this.formRestorationHiddenInput = document.getElementById(config.statePath+'_fmrest');
+                window.addEventListener("pageshow", (event) => {
+                    // called after form restoration
+                    // true if page loaded from session
+                    let restoredState = this.getFormRestorationState();
+                    if(restoredState){
+                        let coords = new LF.LatLng(restoredState.lat, restoredState.lng);
+                        config.zoom = restoredState.zoom;
+                        config.controls.zoom=restoredState.zoom;
+                        this.setCoordinates(coords);
+                    }
+                });
 
+            },
+            setFormRestorationState: function (coords,zoom ) {
+                if(!coords)
+                {
+                    coords=this.getFormRestorationState();
+                    if(!coords) {
+                        coords=this.getCoordinates();
+                    }
+                }
+                if(this.map)
+                {
+                    if(!zoom)
+                    {
+                        coords.zoom=this.map.getZoom();
+                    }
+                    else
+                    {
+                        coords.zoom=zoom;
+                    }
+                }
+                this.formRestorationHiddenInput.value=JSON.stringify(coords);
+            },
+            getFormRestorationState: function () {
+                if(this.formRestorationHiddenInput.value)
+                    return JSON.parse(this.formRestorationHiddenInput.value);
+                return false;
+            },
             updateGeoJson: function() {
                 try {
                     const geoJsonData = this.drawItems.toGeoJSON();
@@ -214,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error("GeoJSON data is not an object:", geoJsonData);
                         return;
                     }
-
                     $wire.set(config.statePath, {
                         ...$wire.get(config.statePath),
                         geojson: geoJsonData
@@ -229,21 +278,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const state = $wire.get(config.statePath) ?? {};
                 return state.geojson;
             },
-
             updateLocation: function() {
-                let coordinates = this.getCoordinates();
-                let currentCenter = this.map.getCenter();
+                let oldCoordinates = this.getCoordinates();
+                let currentCoordinates = this.map.getCenter();
+                if(config.clickable)
+                    currentCoordinates = this.marker.getLatLng();
 
-                if (coordinates.lng !== currentCenter.lng || coordinates.lat !== currentCenter.lat) {
-                    $wire.set(config.statePath, {
-                        ...$wire.get(config.statePath),
-                        lat: currentCenter.lat,
-                        lng: currentCenter.lng
-                    }, false);
-
-                    if (config.liveLocation.send) {
-                        $wire.$refresh();
-                    }
+                if (oldCoordinates.lng !== currentCoordinates.lng || oldCoordinates.lat !== currentCoordinates.lat) {
+                    this.setCoordinates(currentCoordinates);
                 }
             },
 
@@ -260,8 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             getCoordinates: function () {
-                let location = $wire.get(config.statePath) ?? {};
-
+                let location = $wire.get(config.statePath)  ?? {};
                 const hasValidCoordinates = location.hasOwnProperty('lat') && location.hasOwnProperty('lng') &&
                     location.lat !== null && location.lng !== null;
 
@@ -276,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             setCoordinates: function (coords) {
-
+                this.setFormRestorationState(coords);
                 $wire.set(config.statePath, {
                     ...$wire.get(config.statePath),
                     lat: coords.lat,
@@ -335,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             setMarkerRange: function () {
+                if(config.clickable && !this.marker)
+                    return ;
                 if(!this.rangeSelectField)
                     return ;
                 distance=parseInt(this.rangeSelectField.value || 0 ) ;
@@ -354,7 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$wire = $wire;
                 this.config = config;
                 this.state = state;
-                this.rangeSelectField = document.getElementById(config.rangeSelectField || 'data.distance');
+                this.rangeSelectField = document.getElementById(config.rangeSelectField);
+                this.initFormRestoration();
+
                 let that=this
                 if(this.rangeSelectField){
                     this.rangeSelectField.addEventListener('change', function () {that.updateMarker(); });
@@ -363,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             updateMarker: function() {
-                if (config.showMarker) {
+                if (config.showMarker && this.marker) {
                     this.marker.setLatLng(this.getCoordinates());
                     this.setMarkerRange();
                     setTimeout(() => this.updateLocation(), 500);
