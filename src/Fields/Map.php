@@ -40,6 +40,11 @@ class Map extends Field implements MapOptions
         'bounds'               => false,
         'showMyLocationButton' => [false, false, 5000],
         'default'              => ['lat' => 0, 'lng' => 0],
+        'markerHtml' => '',
+        'markerIconUrl' => null,
+        'markerIconSize' => [36, 36],
+        'markerIconClassName' => '',
+        'markerIconAnchor' => [18, 36],
         'geoMan'               => [
             'show'                  =>  false,
             'editable'              =>  true,
@@ -530,6 +535,60 @@ class Map extends Field implements MapOptions
         return $this;
     }
 
+      /**
+     * Set custom HTML for marker icon
+     * @param string $html
+     * @return $this
+     */
+    public function markerHtml(string $html): self 
+    {
+        $this->mapConfig['markerHtml'] = $html;
+        return $this;
+    }
+
+    /**
+     * Set marker icon URL
+     * @param string|null $url
+     * @return $this
+     */
+    public function markerIconUrl(?string $url): self
+    {
+        $this->mapConfig['markerIconUrl'] = $url;
+        return $this;
+    }
+
+    /**
+     * Set marker icon size
+     * @param array $size
+     * @return $this
+     */
+    public function markerIconSize(array $size): self
+    {
+        $this->mapConfig['markerIconSize'] = $size;
+        return $this;
+    }
+
+    /**
+     * Set marker icon class name
+     * @param string $className
+     * @return $this
+     */
+    public function markerIconClassName(string $className): self
+    {
+        $this->mapConfig['markerIconClassName'] = $className;
+        return $this;
+    }
+
+    /**
+     * Set marker icon anchor point
+     * @param array $anchor
+     * @return $this
+     */
+    public function markerIconAnchor(array $anchor): self
+    {
+        $this->mapConfig['markerIconAnchor'] = $anchor;
+        return $this;
+    }
 
     /**
      * Setup function

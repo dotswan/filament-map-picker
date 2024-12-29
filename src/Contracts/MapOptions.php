@@ -23,7 +23,7 @@ interface MapOptions
     public function rangeSelectField(string $rangeSelectField): self;
 
     public function drawCircleMarker(bool $draw = true): self;
-    
+
     public function zoom(int $zoom): self;
 
     public function maxZoom(int $maxZoom): self;
@@ -79,4 +79,14 @@ interface MapOptions
     public function setColor(string $color): self;
 
     public function setFilledColor(string $filledColor): self;
+
+    public function markerHtml(string $html): self ;
+
+    public function markerIconUrl(?string $url): self;
+
+    public function markerIconSize(array $size): self;
+
+    public function markerIconClassName(string $className): self;
+
+    public function markerIconAnchor(array $anchor): self;
 }

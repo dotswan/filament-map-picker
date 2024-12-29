@@ -6,7 +6,6 @@ namespace Dotswan\MapPicker\Infolists;
 
 use Filament\Infolists\Components\Entry;
 use Dotswan\MapPicker\Contracts\MapOptions;
-use Closure;
 
 class MapEntry extends Entry implements MapOptions
 {
@@ -35,7 +34,12 @@ class MapEntry extends Entry implements MapOptions
         'markerColor'          => '#3b82f6',
         'liveLocation'         => [false, false, 5000],
         'showMyLocationButton' => false,
-        'default'              => ['lat' => 0 , 'lng' => 0]
+        'default'              => ['lat' => 0 , 'lng' => 0],
+        'markerHtml'          => '',
+        'markerIconUrl'       => null,
+        'markerIconSize'      => [36, 36],
+        'markerIconClassName' => '',
+        'markerIconAnchor'    => [18, 36],
     ];
 
     /**
@@ -157,7 +161,7 @@ class MapEntry extends Entry implements MapOptions
         return $this;
     }
 
-    
+
     /**
      * Determine if marker is visible or not.
      * @param bool $show
@@ -297,7 +301,7 @@ class MapEntry extends Entry implements MapOptions
      */
     public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
     {
-        if (!$on) {
+        if ( ! $on) {
             $this->mapConfig['boundaries'] = false;
             return $this;
         }
@@ -495,6 +499,61 @@ class MapEntry extends Entry implements MapOptions
     public function setFilledColor(string $filledColor): self
     {
         $this->mapConfig['geoMan']['filledColor'] = $filledColor;
+        return $this;
+    }
+
+    /**
+     * Set custom HTML for marker icon
+     * @param string $html
+     * @return $this
+     */
+    public function markerHtml(string $html): self
+    {
+        $this->mapConfig['markerHtml'] = $html;
+        return $this;
+    }
+
+    /**
+     * Set marker icon URL
+     * @param string|null $url
+     * @return $this
+     */
+    public function markerIconUrl(?string $url): self
+    {
+        $this->mapConfig['markerIconUrl'] = $url;
+        return $this;
+    }
+
+    /**
+     * Set marker icon size
+     * @param array $size
+     * @return $this
+     */
+    public function markerIconSize(array $size): self
+    {
+        $this->mapConfig['markerIconSize'] = $size;
+        return $this;
+    }
+
+    /**
+     * Set marker icon class name
+     * @param string $className
+     * @return $this
+     */
+    public function markerIconClassName(string $className): self
+    {
+        $this->mapConfig['markerIconClassName'] = $className;
+        return $this;
+    }
+
+    /**
+     * Set marker icon anchor point
+     * @param array $anchor
+     * @return $this
+     */
+    public function markerIconAnchor(array $anchor): self
+    {
+        $this->mapConfig['markerIconAnchor'] = $anchor;
         return $this;
     }
 
