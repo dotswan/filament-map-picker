@@ -418,6 +418,40 @@ class Map extends Field implements MapOptions
     }
 
     /**
+     * Enable or disable Snappable.
+     * @param bool $draw
+     * @return $this
+     */
+    public function snappable(bool $snappable = true, int $distance = 20): self
+    {
+        $this->mapConfig['geoMan']['snappable'] = $snappable;
+        $this->mapConfig['geoMan']['snapDistance'] = $distance;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of rectangle.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawRectangle(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawRectangle'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of text.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawText(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawText'] = $draw;
+        return $this;
+    }
+
+    /**
      * Enable or disable rotate mode.
      * @param bool $rotate
      * @return $this
