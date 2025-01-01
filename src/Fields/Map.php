@@ -60,7 +60,11 @@ class Map extends Field implements MapOptions
             'editPolygon'           =>  true,
             'deleteLayer'           =>  true,
             'color'                 =>  '#3388ff',
-            'filledColor'           =>  '#cad9ec'
+            'filledColor'           =>  '#cad9ec',
+            'snappable'             =>  false,
+            'snapDistance'          =>  20,
+            'drawText'              =>  true,
+            'drawRectangle'         =>  true
         ]
     ];
 

@@ -107,9 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Geoman setup
                 if (config.geoMan.show) {
                         this.map.pm.addControls({
+                            snappable: config.geoMan.snappable,
+                            snapDistance: config.geoMan.snapDistance,
                             position: config.geoMan.position,
                             drawCircleMarker: config.geoMan.drawCircleMarker,
                             rotateMode: config.geoMan.rotateMode,
+                            drawRectangle: config.geoMan.drawRectangle,
+                            drawText: config.geoMan.drawText,
                             drawMarker: config.geoMan.drawMarker,
                             drawPolygon: config.geoMan.drawPolygon,
                             drawPolyline: config.geoMan.drawPolyline,
