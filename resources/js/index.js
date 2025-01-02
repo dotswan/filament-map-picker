@@ -172,7 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 },
                                 onEachFeature: (feature, layer) => {
 
-                                    if (feature.geometry.type === 'Polygon') {
+                                    if (typeof feature.properties.title != "undefined") {
+                                        layer.bindPopup(feature.properties.title);
+                                    }else if (feature.geometry.type === 'Polygon') {
                                         layer.bindPopup("Polygon Area");
                                     } else if (feature.geometry.type === 'Point') {
                                         layer.bindPopup("Point Location");
