@@ -60,7 +60,11 @@ class Map extends Field implements MapOptions
             'editPolygon'           =>  true,
             'deleteLayer'           =>  true,
             'color'                 =>  '#3388ff',
-            'filledColor'           =>  '#cad9ec'
+            'filledColor'           =>  '#cad9ec',
+            'snappable'             =>  false,
+            'snapDistance'          =>  20,
+            'drawText'              =>  true,
+            'drawRectangle'         =>  true
         ]
     ];
 
@@ -410,6 +414,40 @@ class Map extends Field implements MapOptions
     public function drawCircleMarker(bool $draw = true): self
     {
         $this->mapConfig['geoMan']['drawCircleMarker'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable Snappable.
+     * @param bool $draw
+     * @return $this
+     */
+    public function snappable(bool $snappable = true, int $distance = 20): self
+    {
+        $this->mapConfig['geoMan']['snappable'] = $snappable;
+        $this->mapConfig['geoMan']['snapDistance'] = $distance;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of rectangle.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawRectangle(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawRectangle'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of text.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawText(bool $draw = true): self
+    {
+        $this->mapConfig['geoMan']['drawText'] = $draw;
         return $this;
     }
 
