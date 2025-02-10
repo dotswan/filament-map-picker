@@ -143,12 +143,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.map.on('pm:create', (e) => {
                             if (e.layer && e.layer.pm) {
                                 e.layer.pm.enable();
+
+                                if (e.shape === 'Circle') {
+                                    const center = e.layer.getLatLng();
+                                    const radius = e.layer.getRadius();
+         
+                                    e.layer.circleData = {
+                                        center: center,
+                                        radius: radius
+                                    };
+                                }
+                                
                                 this.drawItems.addLayer(e.layer);
                                 this.updateGeoJson();
                             }
                         });
 
-                        this.map.on('pm:edit', () => {
+                        this.map.on('pm:edit', (e) => {
+                            if (e.layer && e.layer.getRadius) { 
+                                e.layer.circleData = {
+                                    center: e.layer.getLatLng(),
+                                    radius: e.layer.getRadius()
+                                };
+                            }
                             this.updateGeoJson();
                         });
 
@@ -166,6 +183,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (existingGeoJson) {
                             this.drawItems = LF.geoJSON(existingGeoJson, {
                                 pointToLayer: (feature, latlng) => {
+                                    if (feature.properties && feature.properties.type === "Circle") {
+          
+                                        const circle = LF.circle(latlng, {
+                                            radius: feature.properties.radius,
+                                            color: config.geoMan.color || "#3388ff",
+                                            fillColor: config.geoMan.filledColor || '#cad9ec',
+                                            fillOpacity: 0.4
+                                        });
+    
+                                        circle.circleData = {
+                                            center: latlng,
+                                            radius: feature.properties.radius
+                                        };
+                                        
+                                        return circle;
+                                    }
+               
                                     return LF.circleMarker(latlng, {
                                         radius: 15,
                                         color: '#3388ff',
@@ -213,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }).addTo(this.map);
 
                             if(config.geoMan.editable){
-                                // Enable editing for each layer
+               
                                 this.drawItems.eachLayer(layer => {
                                     layer.pm.enable({
                                         allowSelfIntersection: false,
@@ -248,8 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initFormRestoration: function () {
                 this.formRestorationHiddenInput = document.getElementById(config.statePath+'_fmrest');
                 window.addEventListener("pageshow", (event) => {
-                    // called after form restoration
-                    // true if page loaded from session
+
                     let restoredState = this.getFormRestorationState();
                     if(restoredState){
                         let coords = new LF.LatLng(restoredState.lat, restoredState.lng);
@@ -277,13 +310,40 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             updateGeoJson: function() {
                 try {
-                    const geoJsonData = this.drawItems.toGeoJSON();
-                    if (typeof geoJsonData !== 'object') {
-                        console.error("GeoJSON data is not an object:", geoJsonData);
-                        return;
-                    }
+                    const geoJsonData = {
+                        type: "FeatureCollection",
+                        features: []
+                    };
+
+                    this.drawItems.eachLayer((layer) => {
+                        if (layer.getRadius) {  // It's a circle
+                            const circleData = layer.circleData || {
+                                center: layer.getLatLng(),
+                                radius: layer.getRadius()
+                            };
+                            
+                            geoJsonData.features.push({
+                                type: "Feature",
+                                properties: {
+                                    type: "Circle",
+                                    radius: circleData.radius
+                                },
+                                geometry: {
+                                    type: "Point",
+                                    coordinates: [circleData.center.lng, circleData.center.lat]
+                                }
+                            });
+                        } else {
+     
+                            const layerGeoJson = layer.toGeoJSON();
+                            geoJsonData.features.push(layerGeoJson);
+                        }
+                    });
+
                     $wire.set(config.statePath, {
                         ...$wire.get(config.statePath),
+                        lat: this.marker ? this.marker.getLatLng().lat : this.map.getCenter().lat,
+                        lng: this.marker ? this.marker.getLatLng().lng : this.map.getCenter().lng,
                         geojson: geoJsonData
                     }, true);
 
@@ -307,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Math.abs(oldCoordinates.lng - currentCoordinates.lng) > minChange || 
                     Math.abs(oldCoordinates.lat - currentCoordinates.lat) > minChange) {
                     this.setCoordinates(currentCoordinates);
-                    this.setMarkerRange(); // Update range circle if exists
+                    this.setMarkerRange();
                 }
             },
 
@@ -365,7 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, config.updateDelay || 500);
                 }
 
-                // Call the debounced server update
                 this.debouncedUpdate(coords);
                 
                 return coords;
