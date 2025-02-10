@@ -28,18 +28,42 @@ class MapEntry extends Entry implements MapOptions
         'zoomOffset'           => -1,
         'tileSize'             => 512,
         'detectRetina'         => true,
+        'rangeSelectField'     => 'distance',
         'minZoom'              => 0,
         'maxZoom'              => 28,
         'zoom'                 => 15,
+        'clickable'            => false,
         'markerColor'          => '#3b82f6',
-        'liveLocation'         => [false, false, 5000],
-        'showMyLocationButton' => false,
-        'default'              => ['lat' => 0 , 'lng' => 0],
-        'markerHtml'          => '',
-        'markerIconUrl'       => null,
-        'markerIconSize'      => [36, 36],
-        'markerIconClassName' => '',
-        'markerIconAnchor'    => [18, 36],
+        'liveLocation'         => false,
+        'bounds'               => false,
+        'showMyLocationButton' => [false, false, 5000],
+        'default'              => ['lat' => 0, 'lng' => 0],
+        'markerHtml'           => '',
+        'markerIconUrl'        => null,
+        'markerIconSize'       => [36, 36],
+        'markerIconClassName'  => '',
+        'markerIconAnchor'     => [18, 36],
+        'geoMan'               => [
+            'show'                  =>  false,
+            'editable'              =>  true,
+            'position'              =>  'topleft',
+            'drawCircleMarker'      =>  true,
+            'rotateMode'            =>  true,
+            'drawMarker'            =>  true,
+            'drawPolygon'           =>  true,
+            'drawPolyline'          =>  true,
+            'drawCircle'            =>  true,
+            'dragMode'              =>  true,
+            'cutPolygon'            =>  true,
+            'editPolygon'           =>  true,
+            'deleteLayer'           =>  true,
+            'color'                 =>  '#3388ff',
+            'filledColor'           =>  '#cad9ec',
+            'snappable'             =>  false,
+            'snapDistance'          =>  20,
+            'drawText'              =>  true,
+            'drawRectangle'         =>  true
+        ]
     ];
 
     /**
@@ -64,6 +88,7 @@ class MapEntry extends Entry implements MapOptions
      * @var array
      */
     private array $extraControls = [];
+
 
     /**
      * Create json configuration string
@@ -466,6 +491,41 @@ class MapEntry extends Entry implements MapOptions
     public function dragMode(bool $enable = true): self
     {
         $this->mapConfig['geoMan']['dragMode'] = $enable;
+        return $this;
+    }
+
+    /**
+     * Enable or disable snappable.
+     * @param bool $snappable
+     * @param int $distance
+     * @return $this
+     */
+    public function snappable(bool $snappable = true, int $distance = 20): self
+    {
+        $this->extraControls['snappable'] = $snappable;
+        $this->extraControls['snapDistance'] = $distance;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of rectangles.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawRectangle(bool $draw = true): self
+    {
+        $this->extraControls['drawRectangle'] = $draw;
+        return $this;
+    }
+
+    /**
+     * Enable or disable drawing of text.
+     * @param bool $draw
+     * @return $this
+     */
+    public function drawText(bool $draw = true): self
+    {
+        $this->extraControls['drawText'] = $draw;
         return $this;
     }
 

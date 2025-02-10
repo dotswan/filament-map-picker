@@ -79,58 +79,79 @@ class FilamentResource extends Resource
     {
         return $form->schema([
             Map::make('location')
-                        ->label('Location')
-                        ->columnSpanFull()
-                        ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
-                        ->afterStateUpdated(function (Set $set, ?array $state): void {
-                            $set('latitude',  $state['lat']);
-                            $set('longitude', $state['lng']);
-                            $set('geojson',   json_encode($state['geojson']));
-                        })
-                        ->afterStateHydrated(function ($state, $record, Set $set): void {
-                            $set('location', [
-                                    'lat'     => $record->latitude,
-                                    'lng'     => $record->longitude,
-                                    'geojson' => json_decode(strip_tags($record->description))
-                                ]
-                            );
-                        })
-                        ->extraStyles([
-                            'min-height: 150vh',
-                            'border-radius: 50px'
-                        ])
-                        ->liveLocation(true, true, 5000)
-                        ->showMarker()
-                        ->markerColor("#22c55eff")
-                        ->markerHtml('<div class="custom-marker">...</div>')
-                        ->markerIconUrl('/path/to/marker.png')
-                        ->markerIconSize([32, 32])
-                        ->markerIconClassName('my-marker-class')
-                        ->markerIconAnchor([16, 32])
-                        ->showFullscreenControl()
-                        ->showZoomControl()
-                        ->draggable()
-                        ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                        ->zoom(15)
-                        ->detectRetina()
-                        ->showMyLocationButton()
-                        ->geoMan(true)
-                        ->geoManEditable(true)
-                        ->geoManPosition('topleft')
-                        ->drawCircleMarker()
-                        ->rotateMode()
-                        ->clickable() //click to move marker
-                        ->drawMarker()
-                        ->drawPolygon()
-                        ->drawPolyline()
-                        ->drawCircle()
-                        ->dragMode()
-                        ->cutPolygon()
-                        ->editPolygon()
-                        ->deleteLayer()
-                        ->setColor('#3388ff')
-                        ->setFilledColor('#cad9ec')
-           ]);
+                ->label('Location')
+                ->columnSpanFull()
+                // Basic Configuration
+                ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+                ->draggable(true)
+                ->clickable(true) // click to move marker
+                ->zoom(15)
+                ->minZoom(0)
+                ->maxZoom(28)
+                ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                ->detectRetina(true)
+                
+                // Marker Configuration
+                ->showMarker(true)
+                ->markerColor("#3b82f6")
+                ->markerHtml('<div class="custom-marker">...</div>')
+                ->markerIconUrl('/path/to/marker.png')
+                ->markerIconSize([36, 36])
+                ->markerIconClassName('my-marker-class')
+                ->markerIconAnchor([18, 36])
+                
+                // Controls
+                ->showFullscreenControl(true)
+                ->showZoomControl(true)
+                
+                // Location Features
+                ->liveLocation(true, true, 5000)
+                ->showMyLocationButton(true)
+                ->boundaries(true, 49.5, -11, 61, 2) // Example for British Isles
+                ->rangeSelectField('distance')
+                
+                // GeoMan Integration
+                ->geoMan(true)
+                ->geoManEditable(true)
+                ->geoManPosition('topleft')
+                ->drawCircleMarker(true)
+                ->rotateMode(true)
+                ->drawMarker(true)
+                ->drawPolygon(true)
+                ->drawPolyline(true)
+                ->drawCircle(true)
+                ->drawRectangle(true)
+                ->drawText(true)
+                ->dragMode(true)
+                ->cutPolygon(true)
+                ->editPolygon(true)
+                ->deleteLayer(true)
+                ->setColor('#3388ff')
+                ->setFilledColor('#cad9ec')
+                ->snappable(true, 20)
+                
+                // Extra Customization
+                ->extraStyles([
+                    'min-height: 150vh',
+                    'border-radius: 50px'
+                ])
+                ->extraControl(['customControl' => true])
+                ->extraTileControl(['customTileOption' => 'value'])
+                
+                // State Management
+                ->afterStateUpdated(function (Set $set, ?array $state): void {
+                    $set('latitude', $state['lat']);
+                    $set('longitude', $state['lng']);
+                    $set('geojson', json_encode($state['geojson']));
+                })
+                ->afterStateHydrated(function ($state, $record, Set $set): void {
+                    $set('location', [
+                        'lat' => $record->latitude,
+                        'lng' => $record->longitude,
+                        'geojson' => json_decode(strip_tags($record->description))
+                    ]);
+                })
+        ]);
     }
     ...
 }
@@ -252,6 +273,7 @@ Here's a table describing all available options and their default values:
 
 | Option | Description | Default Value |
 |--------|-------------|---------------|
+| statePath | Path to the state | '' |
 | draggable | Allow map dragging | true |
 | showMarker | Display marker on the map | true |
 | tilesUrl | URL for map tiles | 'http://tile.openstreetmap.org/{z}/{x}/{y}.png' |
@@ -259,13 +281,21 @@ Here's a table describing all available options and their default values:
 | zoomOffset | Zoom offset | -1 |
 | tileSize | Tile size | 512 |
 | detectRetina | Detect and use retina tiles | true |
+| rangeSelectField | Field name for range selection | 'distance' |
 | minZoom | Minimum zoom level | 0 |
 | maxZoom | Maximum zoom level | 28 |
 | zoom | Default zoom level | 15 |
+| clickable | Allow clicking to place marker | false |
 | markerColor | Color of the marker | '#3b82f6' |
-| liveLocation | Enable live location updates | [false, false, 5000] |
-| showMyLocationButton | Show "My Location" button | false |
-| default | Default location | ['lat' => 0, 'lng' => 0] |
+| liveLocation | Enable live location updates | false |
+| bounds | Enable map boundaries | false |
+| showMyLocationButton | Show "My Location" button settings | [false, false, 5000] |
+| default | Default location coordinates | ['lat' => 0, 'lng' => 0] |
+| markerHtml | Custom HTML for marker | '' |
+| markerIconUrl | URL for custom marker icon | null |
+| markerIconSize | Size of marker icon | [36, 36] |
+| markerIconClassName | CSS class for marker icon | '' |
+| markerIconAnchor | Anchor point for marker icon | [18, 36] |
 | geoMan.show | Enable GeoMan | false |
 | geoMan.editable | Allow editing with GeoMan | true |
 | geoMan.position | Position of GeoMan controls | 'topleft' |
@@ -281,38 +311,78 @@ Here's a table describing all available options and their default values:
 | geoMan.deleteLayer | Allow deleting layers | true |
 | geoMan.color | Stroke color for drawings | '#3388ff' |
 | geoMan.filledColor | Fill color for drawings | '#cad9ec' |
+| geoMan.snappable | Enable snapping to objects | false |
+| geoMan.snapDistance | Distance for snapping | 20 |
+| geoMan.drawText | Allow drawing text | true |
+| geoMan.drawRectangle | Allow drawing rectangles | true |
 
 ### Usage As Infolist Field
 
-The MapEntry Infolist field displays a map.
+The MapEntry Infolist field displays a map with all the same configuration options available in the form field. Here's an example:
 
 ```php
-
 use Dotswan\MapPicker\Infolists\MapEntry;
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                MapEntry::make('location')
-                    ->extraStyles([
-                        'min-height: 50vh',
-                        'border-radius: 50px'
-                    ])
-                    ->state(fn ($record) => ['lat' => $record?->latitude, 'lng' => $record?->longitude])
-                    ->showMarker()
-                    ->markerColor("#22c55eff")
-                    ->showFullscreenControl()
-                    ->draggable(false)
-                    ->zoom(15),
-
-                .....
-            ]);
-    }
-
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            MapEntry::make('location')
+                // Basic Configuration
+                ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
+                ->draggable(false) // Usually false for infolist view
+                ->zoom(15)
+                ->minZoom(0)
+                ->maxZoom(28)
+                ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                ->detectRetina(true)
+                
+                // Marker Configuration
+                ->showMarker(true)
+                ->markerColor("#22c55eff")
+                ->markerHtml('<div class="custom-marker">...</div>')
+                ->markerIconUrl('/path/to/marker.png')
+                ->markerIconSize([36, 36])
+                ->markerIconClassName('my-marker-class')
+                ->markerIconAnchor([18, 36])
+                
+                // Controls
+                ->showFullscreenControl(true)
+                ->showZoomControl(true)
+                
+                // GeoMan Integration (if needed for viewing)
+                ->geoMan(true)
+                ->geoManEditable(false) // Usually false for infolist view
+                ->geoManPosition('topleft')
+                ->drawCircleMarker(true)
+                ->drawMarker(true)
+                ->drawPolygon(true)
+                ->drawPolyline(true)
+                ->drawCircle(true)
+                ->drawRectangle(true)
+                ->drawText(true)
+                
+                // Styling
+                ->extraStyles([
+                    'min-height: 50vh',
+                    'border-radius: 50px'
+                ])
+                
+                // State Management
+                ->state(fn ($record) => [
+                    'lat' => $record?->latitude,
+                    'lng' => $record?->longitude,
+                    'geojson' => $record?->geojson ? json_decode($record->geojson) : null
+                ])
+        ]);
+}
 ```
-<hr/>
 
+Note: In infolist context, it's common to:
+- Set `draggable(false)` since it's typically used for viewing only
+- Set `geoManEditable(false)` if GeoMan is enabled
+- Use `state()` instead of `afterStateHydrated()`/`afterStateUpdated()`
+- Adjust the height to be smaller than in forms (e.g., 50vh vs 150vh)
 
 ## Usage Guide for Handling Map Locations
 
