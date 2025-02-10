@@ -89,4 +89,10 @@ interface MapOptions
     public function markerIconClassName(string $className): self;
 
     public function markerIconAnchor(array $anchor): self;
+
+    public function snappable(bool $snappable = true, int $distance = 20): self;
+
+    public function drawRectangle(bool $draw = true): self;
+
+    public function drawText(bool $draw = true): self;
 }

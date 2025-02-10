@@ -13,6 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
             drawItems: null,
             rangeSelectField: null,
             formRestorationHiddenInput:null,
+            debouncedUpdate: null,
+            
+            debounce: function(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
             
             createMap: function (el) {
                 const that = this;
@@ -72,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if(!config.clickable)
                 {
-                    this.map.on('moveend', () => setTimeout(() => this.updateLocation(), 500));
+                    this.map.on('moveend', () => this.updateLocation());
                 }
 
                 this.map.on('locationfound', function () {
@@ -286,11 +299,15 @@ document.addEventListener('DOMContentLoaded', () => {
             updateLocation: function() {
                 let oldCoordinates = this.getCoordinates();
                 let currentCoordinates = this.map.getCenter();
-                if(config.clickable)
+                if(config.clickable) {
                     currentCoordinates = this.marker.getLatLng();
+                }
 
-                if (oldCoordinates.lng !== currentCoordinates.lng || oldCoordinates.lat !== currentCoordinates.lat) {
+                const minChange = config.minChange || 0.00001; 
+                if (Math.abs(oldCoordinates.lng - currentCoordinates.lng) > minChange || 
+                    Math.abs(oldCoordinates.lat - currentCoordinates.lat) > minChange) {
                     this.setCoordinates(currentCoordinates);
+                    this.setMarkerRange(); // Update range circle if exists
                 }
             },
 
@@ -307,7 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             getCoordinates: function () {
+                if(state){
+                    return state;
+                }
+                
                 let location = $wire.get(config.statePath)  ?? {};
+
                 const hasValidCoordinates = location.hasOwnProperty('lat') && location.hasOwnProperty('lng') &&
                     location.lat !== null && location.lng !== null;
 
@@ -322,17 +344,30 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             setCoordinates: function (coords) {
-                this.setFormRestorationState(coords);
-                $wire.set(config.statePath, {
-                    ...$wire.get(config.statePath),
-                    lat: coords.lat,
-                    lng: coords.lng
-                }, false);
 
-                if (config.liveLocation.send) {
-                    $wire.$refresh();
+                if (this.marker && config.showMarker) {
+                    this.marker.setLatLng(coords);
                 }
-                this.updateMarker();
+                this.setFormRestorationState(coords);
+
+                if (!this.debouncedUpdate) {
+                    this.debouncedUpdate = this.debounce((coords) => {
+                        $wire.set(config.statePath, {
+                            ...$wire.get(config.statePath),
+                            lat: coords.lat,
+                            lng: coords.lng
+                        });
+
+                        if (config.liveLocation.send) {
+                            $wire.$refresh();
+                        }
+                        this.updateMarker();
+                    }, config.updateDelay || 500);
+                }
+
+                // Call the debounced server update
+                this.debouncedUpdate(coords);
+                
                 return coords;
             },
 
@@ -423,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (config.showMarker && this.marker) {
                     this.marker.setLatLng(this.getCoordinates());
                     this.setMarkerRange();
-                    setTimeout(() => this.updateLocation(), 500);
+                    this.updateLocation();
                 }
             },
 
