@@ -25,7 +25,7 @@ class Map extends Field implements MapOptions
         'statePath'            => '',
         'draggable'            => true,
         'showMarker'           => true,
-        'tilesUrl'             => 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'tilesUrl'             => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         'attribution'          => null,
         'zoomOffset'           => -1,
         'tileSize'             => 512,
