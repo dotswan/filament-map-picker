@@ -16,7 +16,7 @@
         }" wire:ignore>
         <div
             x-ref="map"
-            class="w-full" style="min-height: 30vh; z-index: 1 !important; {{ $getExtraStyle() }}">
+            class="w-full" style="min-height: 30vh; {{ $getExtraStyle() }}">
         </div>
         <input type="text" id="{{ $getId() }}_fmrest" style="display:none"/>
     </div>
