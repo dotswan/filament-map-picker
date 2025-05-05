@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dotswan\MapPicker\Fields;
 
+use Closure;
 use Filament\Forms\Components\Field;
 use Dotswan\MapPicker\Contracts\MapOptions;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
@@ -121,24 +122,25 @@ class Map extends Field implements MapOptions
 
     /**
      * Determines if the user can click to place the marker on the map.
-     * @param bool $clickable
+     * @param Closure|bool $clickable
      * @return $this
      */
-    public function clickable(bool $clickable): self
+    public function clickable(Closure|bool $clickable): self
     {
-        $this->mapConfig['clickable'] = $clickable;
+        $this->mapConfig['clickable'] = $this->evaluate($clickable);
         return $this;
     }
 
     /**
      * Determine if user can drag map around or not.
-     * @param bool $draggable
+     * @param Closure|bool $draggable
      * @return MapOptions
      * @note Default value is false
      */
-    public function draggable(bool $draggable = true): self
+    public function draggable(Closure|bool $draggable = true): self
     {
-        $this->mapConfig['draggable'] = $draggable;
+        $this->mapConfig['draggable'] = $this->evaluate($draggable);
+
         return $this;
     }
 
@@ -150,16 +152,16 @@ class Map extends Field implements MapOptions
      * the size of the box or the way it pans back to the bounding box
      * looks strange. You can call with $on set to false to undo this.
      *
-     * @param boolean $on
+     * @param Closure|bool $on
      * @param int|float $southWestLat
      * @param int|float $southWestLng
      * @param int|float $northEastLat
      * @param int|float $northEastLng
      * @return self
      */
-    public function boundaries(bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
+    public function boundaries(Closure|bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
     {
-        if ( ! $on) {
+        if ( ! $this->evaluate($on)) {
             $this->mapConfig['boundaries'] = false;
 
             return $this;
@@ -243,13 +245,13 @@ class Map extends Field implements MapOptions
 
     /**
      * Determine if marker is visible or not.
-     * @param bool $show
+     * @param Closure|bool $show
      * @return $this
      * @note Default value is false
      */
-    public function showMarker(bool $show = true): self
+    public function showMarker(Closure|bool $show = true): self
     {
-        $this->mapConfig['showMarker'] = $show;
+        $this->mapConfig['showMarker'] = $this->evaluate($show);
         return $this;
     }
 
@@ -279,35 +281,35 @@ class Map extends Field implements MapOptions
 
     /**
      * Determine if it detects retina monitors or not.
-     * @param bool $detectRetina
+     * @param Closure|bool $detectRetina
      * @return $this
      */
-    public function detectRetina(bool $detectRetina = true): self
+    public function detectRetina(Closure|bool $detectRetina = true): self
     {
-        $this->mapConfig['detectRetina'] = $detectRetina;
+        $this->mapConfig['detectRetina'] = $this->evaluate($detectRetina);
         return $this;
     }
 
     /**
      * Determine if zoom box is visible or not.
-     * @param bool $show
+     * @param Closure|bool $show
      * @return $this
      */
-    public function showZoomControl(bool $show = true): self
+    public function showZoomControl(Closure|bool $show = true): self
     {
-        $this->controls['zoomControl'] = $show;
+        $this->controls['zoomControl'] = $this->evaluate($show);
         return $this;
     }
 
 
     /**
      * Determine if fullscreen box is visible or not.
-     * @param bool $show
+     * @param Closure|bool $show
      * @return $this
      */
-    public function showFullscreenControl(bool $show = true): self
+    public function showFullscreenControl(Closure|bool $show = true): self
     {
-        $this->controls['fullscreenControl'] = $show;
+        $this->controls['fullscreenControl'] = $this->evaluate($show);
         return $this;
     }
 
@@ -324,14 +326,14 @@ class Map extends Field implements MapOptions
 
     /**
      * Enable or disable live location updates for the map.
-     * @param bool $send
+     * @param Closure|bool $send
      * @return $this
      */
-    public function liveLocation(bool $send = true, bool $realtime = false, int $miliseconds = 5000): self
+    public function liveLocation(Closure|bool $send = true, Closure|bool $realtime = false, int $miliseconds = 5000): self
     {
         $this->mapConfig['liveLocation'] = [
-            'send' => $send,
-            'realtime' => $realtime,
+            'send' => $this->evaluate($send),
+            'realtime' => $this->evaluate($realtime),
             'miliseconds' => $miliseconds
         ];
         return $this;
@@ -339,12 +341,12 @@ class Map extends Field implements MapOptions
 
     /**
      * Enable or disable show my location button on map.
-     * @param bool $showMyLocationButton
+     * @param Closure|bool $showMyLocationButton
      * @return $this
      */
-    public function showMyLocationButton(bool $showMyLocationButton = true): self
+    public function showMyLocationButton(Closure|bool $showMyLocationButton = true): self
     {
-        $this->mapConfig['showMyLocationButton'] = $showMyLocationButton;
+        $this->mapConfig['showMyLocationButton'] = $this->evaluate($showMyLocationButton);
         return $this;
     }
 
@@ -373,24 +375,24 @@ class Map extends Field implements MapOptions
 
     /**
      * Enable or disable GeoMan functionality.
-     * @param bool $show
+     * @param Closure|bool $show
      * @return $this
      */
-    public function geoMan(bool $show = true): self
+    public function geoMan(Closure|bool $show = true): self
     {
-        $this->mapConfig['geoMan']['show'] = $show;
+        $this->mapConfig['geoMan']['show'] = $this->evaluate($show);
         return $this;
     }
 
 
     /**
      * Enable or disable GeoMan edit mode.
-     * @param bool $show
+     * @param Closure|bool $show
      * @return $this
      */
-    public function geoManEditable(bool $show = true): self
+    public function geoManEditable(Closure|bool $show = true): self
     {
-        $this->mapConfig['geoMan']['editable'] = $show;
+        $this->mapConfig['geoMan']['editable'] = $this->evaluate($show);
         return $this;
     }
 
@@ -408,146 +410,146 @@ class Map extends Field implements MapOptions
 
     /**
      * Enable or disable drawing of circle markers.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawCircleMarker(bool $draw = true): self
+    public function drawCircleMarker(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawCircleMarker'] = $draw;
+        $this->mapConfig['geoMan']['drawCircleMarker'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable Snappable.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function snappable(bool $snappable = true, int $distance = 20): self
+    public function snappable(Closure|bool $snappable = true, int $distance = 20): self
     {
-        $this->mapConfig['geoMan']['snappable'] = $snappable;
+        $this->mapConfig['geoMan']['snappable'] = $this->evaluate($snappable);
         $this->mapConfig['geoMan']['snapDistance'] = $distance;
         return $this;
     }
 
     /**
      * Enable or disable drawing of rectangle.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawRectangle(bool $draw = true): self
+    public function drawRectangle(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawRectangle'] = $draw;
+        $this->mapConfig['geoMan']['drawRectangle'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable drawing of text.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawText(bool $draw = true): self
+    public function drawText(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawText'] = $draw;
+        $this->mapConfig['geoMan']['drawText'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable rotate mode.
-     * @param bool $rotate
+     * @param Closure|bool $rotate
      * @return $this
      */
-    public function rotateMode(bool $rotate = true): self
+    public function rotateMode(Closure|bool $rotate = true): self
     {
-        $this->mapConfig['geoMan']['rotateMode'] = $rotate;
+        $this->mapConfig['geoMan']['rotateMode'] = $this->evaluate($rotate);
         return $this;
     }
 
     /**
      * Enable or disable drawing of markers.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawMarker(bool $draw = true): self
+    public function drawMarker(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawMarker'] = $draw;
+        $this->mapConfig['geoMan']['drawMarker'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable drawing of polygons.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawPolygon(bool $draw = true): self
+    public function drawPolygon(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawPolygon'] = $draw;
+        $this->mapConfig['geoMan']['drawPolygon'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable drawing of polylines.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawPolyline(bool $draw = true): self
+    public function drawPolyline(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawPolyline'] = $draw;
+        $this->mapConfig['geoMan']['drawPolyline'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable drawing of circles.
-     * @param bool $draw
+     * @param Closure|bool $draw
      * @return $this
      */
-    public function drawCircle(bool $draw = true): self
+    public function drawCircle(Closure|bool $draw = true): self
     {
-        $this->mapConfig['geoMan']['drawCircle'] = $draw;
+        $this->mapConfig['geoMan']['drawCircle'] = $this->evaluate($draw);
         return $this;
     }
 
     /**
      * Enable or disable editing of polygons.
-     * @param bool $edit
+     * @param Closure|bool $edit
      * @return $this
      */
-    public function editPolygon(bool $edit = true): self
+    public function editPolygon(Closure|bool $edit = true): self
     {
-        $this->mapConfig['geoMan']['editPolygon'] = $edit;
+        $this->mapConfig['geoMan']['editPolygon'] = $this->evaluate($edit);
         return $this;
     }
 
     /**
      * Enable or disable deletion of layers.
-     * @param bool $delete
+     * @param Closure|bool $delete
      * @return $this
      */
-    public function deleteLayer(bool $delete = true): self
+    public function deleteLayer(Closure|bool $delete = true): self
     {
-        $this->mapConfig['geoMan']['deleteLayer'] = $delete;
+        $this->mapConfig['geoMan']['deleteLayer'] = $this->evaluate($delete);
         return $this;
     }
 
 
     /**
      * Enable or disable drag mode.
-     * @param bool $enable
+     * @param Closure|bool $enable
      * @return $this
      */
-    public function dragMode(bool $enable = true): self
+    public function dragMode(Closure|bool $enable = true): self
     {
-        $this->mapConfig['geoMan']['dragMode'] = $enable;
+        $this->mapConfig['geoMan']['dragMode'] = $this->evaluate($enable);
         return $this;
     }
 
     /**
      * Enable or disable polygon cutting.
-     * @param bool $enable
+     * @param Closure|bool $enable
      * @return $this
      */
-    public function cutPolygon(bool $enable = true): self
+    public function cutPolygon(Closure|bool $enable = true): self
     {
-        $this->mapConfig['geoMan']['cutPolygon'] = $enable;
+        $this->mapConfig['geoMan']['cutPolygon'] = $this->evaluate($enable);
         return $this;
     }
 
