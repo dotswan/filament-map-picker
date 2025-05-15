@@ -23,6 +23,7 @@ class Map extends Field implements MapOptions
      * @var array
      */
     private array $mapConfig = [
+        'type'                 => 'field',
         'statePath'            => '',
         'draggable'            => true,
         'showMarker'           => true,
