@@ -29,3 +29,19 @@
     height: 24px;
     fill: #333;
 }
+
+.leaflet-pane,
+.leaflet-tile-pane,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane,
+.leaflet-marker-pane,
+.leaflet-tooltip-pane,
+.leaflet-popup-pane,
+.leaflet-map-pane canvas,
+.leaflet-map-pane svg,
+.leaflet-control,
+.leaflet-top,
+.leaflet-bottom,
+.map-location-button {
+    z-index: auto !important;
+}
