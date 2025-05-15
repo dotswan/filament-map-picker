@@ -412,11 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!this.debouncedUpdate) {
                     this.debouncedUpdate = this.debounce((coords) => {
-                        $wire.set(config.statePath, {
-                            ...$wire.get(config.statePath),
-                            lat: coords.lat,
-                            lng: coords.lng
-                        });
+                        if(config.type === 'field'){
+                            $wire.set(config.statePath, {
+                                ...$wire.get(config.statePath),
+                                lat: coords.lat,
+                                    lng: coords.lng
+                                });
+                        }
 
                         if (config.liveLocation.send) {
                             $wire.$refresh();

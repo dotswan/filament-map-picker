@@ -21,6 +21,7 @@ class MapEntry extends Entry implements MapOptions
      * @var array
      */
     private array $mapConfig = [
+        'type'                 => 'entry',
         'statePath'            => '',
         'draggable'            => true,
         'showMarker'           => true,
