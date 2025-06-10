@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rangeSelectField: null,
             formRestorationHiddenInput:null,
             debouncedUpdate: null,
+            EntityState: null,
             
             debounce: function(func, wait) {
                 let timeout;
@@ -353,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             getGeoJson: function() {
-                const state = $wire.get(config.statePath) ?? {};
+                const state = $wire.get(config.statePath) ?? this.EntityState ??{};
                 return state.geojson;
             },
             updateLocation: function() {
@@ -505,6 +506,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.$wire = $wire;
                 this.config = config;
                 this.state = state;
+                this.EntityState = state;
+                
                 this.rangeSelectField = document.getElementById(config.rangeSelectField);
                 this.initFormRestoration();
 
