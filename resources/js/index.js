@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.map.setMaxBounds(bounds);
                     this.map.fitBounds(bounds);
                     this.map.on('drag', function() {
-                        map.panInsideBounds(bounds, { animate: false });
+                        that.map.panInsideBounds(bounds, { animate: false });
                     });
                 }
                 this.map.on('load', () => {
