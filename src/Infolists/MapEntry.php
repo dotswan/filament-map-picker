@@ -329,7 +329,7 @@ class MapEntry extends Entry implements MapOptions
     public function boundaries(Closure|bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
     {
         if ( ! $this->evaluate($on)) {
-            $this->mapConfig['boundaries'] = false;
+            $this->mapConfig['bounds'] = false;
             return $this;
         }
 
