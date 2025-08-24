@@ -7,11 +7,11 @@ namespace Dotswan\MapPicker\Fields;
 use Closure;
 use Filament\Forms\Components\Field;
 use Dotswan\MapPicker\Contracts\MapOptions;
-use Filament\Forms\Concerns\HasStateBindingModifiers;
+//use Filament\Forms\Concerns\HasStateBindingModifiers;
 
 class Map extends Field implements MapOptions
 {
-    use HasStateBindingModifiers;
+    //use HasStateBindingModifiers;
     /**
      * Field view
      * @var string
