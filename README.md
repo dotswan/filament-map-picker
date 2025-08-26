@@ -57,7 +57,12 @@ Additional map options will be added to the package as needed and tested.
 You can easily install the package via Composer:
 
 ```bash
-composer require dotswan/filament-map-picker
+composer require dotswan/filament-map-picker: "^2.0"
+```
+
+For **Filament v3**:
+```bash
+composer require dotswan/filament-map-picker:"^1.8"
 ```
 
 ## Basic Usage
