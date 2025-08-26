@@ -1,4 +1,4 @@
-# Filament V3 Map Picker
+# Filament Map Picker
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -57,7 +57,7 @@ Additional map options will be added to the package as needed and tested.
 You can easily install the package via Composer:
 
 ```bash
-composer require dotswan/filament-map-picker: "^2.0"
+composer require dotswan/filament-map-picker
 ```
 
 For **Filament v3**:
