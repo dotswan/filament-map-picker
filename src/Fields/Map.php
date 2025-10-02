@@ -100,8 +100,9 @@ class Map extends Field implements MapOptions
     public function getMapConfig(): string
     {
         $statePath = $this->getStatePath();
-        $lastDotPosition = mb_strrpos($statePath, '.');
-        $rangeSelectField = mb_substr($statePath, 0, $lastDotPosition + 1).$this->mapConfig['rangeSelectField'];
+        $mapId = $this->getId();
+        $lastDotPosition = mb_strrpos($mapId, '.');
+        $rangeSelectField = mb_substr($mapId, 0, $lastDotPosition + 1) . $this->mapConfig['rangeSelectField'];
         return json_encode(
             array_merge($this->mapConfig, [
                 'statePath' => $statePath,
