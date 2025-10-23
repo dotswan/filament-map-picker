@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
             initFormRestoration: function () {
-                this.formRestorationHiddenInput = document.getElementById(config.statePath+'_fmrest');
+                this.formRestorationHiddenInput = this.$refs?.formRestorationInput || document.getElementById(config.statePath+'_fmrest');
                 window.addEventListener("pageshow", (event) => {
 
                     let restoredState = this.getFormRestorationState();
@@ -302,10 +302,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     coords.zoom = zoom ?? this.map.getZoom();
                 }
             
-                this.formRestorationHiddenInput.value = JSON.stringify(coords);
+                if (this.formRestorationHiddenInput) {
+                    this.formRestorationHiddenInput.value = JSON.stringify(coords);
+                }
             },
             getFormRestorationState: function () {
-                if(this.formRestorationHiddenInput.value)
+                if(this.formRestorationHiddenInput && this.formRestorationHiddenInput.value)
                     return JSON.parse(this.formRestorationHiddenInput.value);
                 return false;
             },
@@ -433,7 +435,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return coords;
             },
 
-            attach: function (el) {
+            attach: function (el, refs = null) {
+                if (refs) {
+                    this.$refs = refs;
+                }
                 this.createMap(el);
                 const observer = new IntersectionObserver(entries => {
                     entries.forEach(entry => {
