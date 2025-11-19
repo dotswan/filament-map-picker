@@ -11,7 +11,7 @@ document.addEventListener('livewire:init', () => {
             marker: null,
             rangeCircle: null,
             drawItems: null,
-            rangeSelectField: null,
+            rangeSelectFieldStatePath: null,
             formRestorationHiddenInput:null,
             debouncedUpdate: null,
 
@@ -391,13 +391,13 @@ document.addEventListener('livewire:init', () => {
             //gets coordinates from the state path.
             getCoordinates: function () {
 
-                let location = $wire.$get(this.config.statePath) ?? {};
+                let location = this.getCoordsFromState();
 
                 const hasValidCoordinates = location.hasOwnProperty('lat') && location.hasOwnProperty('lng') &&
                     location.lat !== null && location.lng !== null;
 
                 if (!hasValidCoordinates) {
-                    console.log('getCoordinates(): does not have valid coordinates', )
+                    console.log('getCoordinates(): does not have valid coordinates', location )
                     location = {
                         lat: config.default.lat,
                         lng: config.default.lng
@@ -407,6 +407,15 @@ document.addEventListener('livewire:init', () => {
                 return location;
             },
 
+            getCoordsFromState: function() {
+                let stateVal = $wire.get(this.config.statePath);
+                if(typeof stateVal == 'string')
+                    stateVal = JSON.parse(stateVal);
+                console.log(stateVal, typeof stateVal);
+                if(stateVal!==null && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
+                    return stateVal;
+                return {}
+            },
 
             //sets Coordinates and updates the state object
             //causes livewire refresh if liveLocation.send true in config
@@ -422,7 +431,7 @@ document.addEventListener('livewire:init', () => {
                 }
 
                 if (this.config.liveLocation.send) {
-                    $wire.$refresh();
+                    $wire.refresh();
                 }
                 return coords;
             },
@@ -477,14 +486,13 @@ document.addEventListener('livewire:init', () => {
 
             setMarkerRange: function(coordinates) {
 
-                if ((this.config.clickable && !this.marker) || !this.rangeSelectField) {
+                if ((this.config.clickable && !this.marker) || !this.config.rangeSelectFieldStatePath) {
                     return;
                 }
 
-                const distance = parseInt(this.rangeSelectField.value || 0);
+                const distance = parseInt($wire.get(this.rangeSelectFieldStatePath)  || 0);
                 if (!coordinates)
-            {
-                    console.log('marker range from getCoordinates')
+                {
                     coordinates = this.getCoordinates();
                 }
                 const circleStyle = {
@@ -494,32 +502,28 @@ document.addEventListener('livewire:init', () => {
                     radius: distance
                 };
                 if (this.rangeCircle) {
-                 this.rangeCircle
-                    .setLatLng(coordinates)
-                    .setRadius(distance)
+                    this.rangeCircle.remove();
                 }
-                else
-                {
-                    this.rangeCircle = LF.circle(coordinates, circleStyle).addTo(this.map);
-                }
+                this.rangeCircle = LF.circle(coordinates, circleStyle).addTo(this.map);
             },
 
             init: function() {
                 this.$wire = $wire;
                 this.config = config;
-                this.rangeSelectField = document.getElementById(config.rangeSelectField);
+                this.rangeSelectFieldStatePath = config.rangeSelectFieldStatePath;
                 this.initFormRestoration();
                 let that=this
-                if(this.rangeSelectField){
-                    this.rangeSelectField.addEventListener('change', function () {that.updateMarker(); });
-                }
                 $wire.on('refreshMap', this.refreshMap.bind(this));
 
-                $wire.$watch(config.statePath, newVal => {
-                    console.log('newval ',typeof newVal, newVal);
+                $wire.watch(config.statePath, newVal => {
                     if(typeof newVal == 'string')
                         newVal=JSON.parse(newVal);
                     that.updateMarker(newVal);
+                });
+
+                $wire.watch(config.rangeSelectFieldStatePath, newVal => {
+                    console.log('called', typeof newVal, newVal);
+                    that.updateMarker();
                 });
             },
 
@@ -533,6 +537,7 @@ document.addEventListener('livewire:init', () => {
                     console.log('coords',coords);
                     if(coords.lat)
                 {
+                        console.log('setting latLng and marker range', coords);
                     this.marker.setLatLng(coords);
                     this.setMarkerRange(coords);
                     }
