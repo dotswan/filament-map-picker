@@ -397,7 +397,6 @@ document.addEventListener('livewire:init', () => {
                     location.lat !== null && location.lng !== null;
 
                 if (!hasValidCoordinates) {
-                    console.log('getCoordinates(): does not have valid coordinates', location )
                     location = {
                         lat: config.default.lat,
                         lng: config.default.lng
@@ -411,7 +410,6 @@ document.addEventListener('livewire:init', () => {
                 let stateVal = $wire.get(this.config.statePath);
                 if(typeof stateVal == 'string')
                     stateVal = JSON.parse(stateVal);
-                console.log(stateVal, typeof stateVal);
                 if(stateVal!==null && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
                     return stateVal;
                 return {}
@@ -420,7 +418,6 @@ document.addEventListener('livewire:init', () => {
             //sets Coordinates and updates the state object
             //causes livewire refresh if liveLocation.send true in config
             setCoordinates: function (coords) {
-                console.log('setCoordinates called with coords:',coords);
                 this.setFormRestorationState(coords);
 
                 if(config.type === 'field'){
@@ -437,7 +434,6 @@ document.addEventListener('livewire:init', () => {
             },
 
             attach: function (el, refs = null) {
-                console.log('attatching el with refs',el,refs);
                 if (refs) {
                     this.$refs = refs;
                 }
@@ -522,30 +518,20 @@ document.addEventListener('livewire:init', () => {
                 });
 
                 $wire.watch(config.rangeSelectFieldStatePath, newVal => {
-                    console.log('called', typeof newVal, newVal);
                     that.updateMarker();
                 });
             },
 
             //sets Marker to Coordinate position.
             updateMarker: function(coords) {
-                console.log('updateMarker called with coords:',coords, this.config.showMarker, !coords);
-                console.log('this.marker',this.marker);
                 if (this.config.showMarker && this.marker) {
                     if(!coords)
                         coords = this.getCoordinates()
-                    console.log('coords',coords);
                     if(coords.lat)
-                {
-                        console.log('setting latLng and marker range', coords);
-                    this.marker.setLatLng(coords);
-                    this.setMarkerRange(coords);
+                    {
+                        this.marker.setLatLng(coords);
+                        this.setMarkerRange(coords);
                     }
-                    else
-                {
-                        console.log('Coords not right!',coords, coords.lat, typeof coords)
-                    }
-//                    this.updateLocation(); I think this should go somewhere else.
                 }
             },
 
