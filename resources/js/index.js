@@ -3,19 +3,18 @@ import 'leaflet-fullscreen';
 import "@geoman-io/leaflet-geoman-free";
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const mapPicker = ($wire, config, state) => {
+document.addEventListener('livewire:init', () => {
+    const mapPicker = ($wire, config ) => {
         return {
             map: null,
             tile: null,
             marker: null,
             rangeCircle: null,
             drawItems: null,
-            rangeSelectField: null,
+            rangeSelectFieldStatePath: null,
             formRestorationHiddenInput:null,
             debouncedUpdate: null,
-            EntityState: null,
-            
+
             debounce: function(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {
@@ -27,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     timeout = setTimeout(later, wait);
                 };
             },
-            
+
             createMap: function (el) {
                 const that = this;
 
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 this.map.on('load', () => {
                     setTimeout(() => this.map.invalidateSize(true), 0);
-                    
+
                     if (config.showMarker && !config.clickable) {
                         this.marker.setLatLng(this.map.getCenter());
                     }
@@ -148,20 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (e.shape === 'Circle') {
                                     const center = e.layer.getLatLng();
                                     const radius = e.layer.getRadius();
-         
+
                                     e.layer.circleData = {
                                         center: center,
                                         radius: radius
                                     };
                                 }
-                                
+
                                 this.drawItems.addLayer(e.layer);
                                 this.updateGeoJson();
                             }
                         });
 
                         this.map.on('pm:edit', (e) => {
-                            if (e.layer && e.layer.getRadius) { 
+                            if (e.layer && e.layer.getRadius) {
                                 e.layer.circleData = {
                                     center: e.layer.getLatLng(),
                                     radius: e.layer.getRadius()
@@ -185,22 +184,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             this.drawItems = LF.geoJSON(existingGeoJson, {
                                 pointToLayer: (feature, latlng) => {
                                     if (feature.properties && feature.properties.type === "Circle") {
-          
+
                                         const circle = LF.circle(latlng, {
                                             radius: feature.properties.radius,
                                             color: config.geoMan.color || "#3388ff",
                                             fillColor: config.geoMan.filledColor || '#cad9ec',
                                             fillOpacity: 0.4
                                         });
-    
+
                                         circle.circleData = {
                                             center: latlng,
                                             radius: feature.properties.radius
                                         };
-                                        
+
                                         return circle;
                                     }
-               
+
                                     return LF.circleMarker(latlng, {
                                         radius: 15,
                                         color: '#3388ff',
@@ -248,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }).addTo(this.map);
 
                             if(config.geoMan.editable){
-               
+
                                 this.drawItems.eachLayer(layer => {
                                     layer.pm.enable({
                                         allowSelfIntersection: false,
@@ -258,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             this.map.fitBounds(this.drawItems.getBounds());
                     }
-              }
+                }
             },
             createMarkerIcon() {
                 if (config.markerIconUrl) {
@@ -272,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const markerColor = config.markerColor || "#3b82f6";
                 const defaultHtml = `<svg xmlns="http://www.w3.org/2000/svg" class="map-icon" fill="${markerColor}" width="36" height="36" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>`;
-                
+
                 return LF.divIcon({
                     html: config.markerHtml || defaultHtml,
                     className: config.markerIconClassName,
@@ -281,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
             initFormRestoration: function () {
-                this.formRestorationHiddenInput = this.$refs?.formRestorationInput || document.getElementById(config.statePath+'_fmrest');
+                this.formRestorationHiddenInput = this.$refs?.formRestorationInput || document.getElementById(this.config.statePath+'_fmrest');
                 window.addEventListener("pageshow", (event) => {
 
                     let restoredState = this.getFormRestorationState();
@@ -297,11 +296,11 @@ document.addEventListener('DOMContentLoaded', () => {
             setFormRestorationState: function(coords = null, zoom = null) {
 
                 coords = coords || this.getFormRestorationState() || this.getCoordinates();
-            
+
                 if (this.map) {
                     coords.zoom = zoom ?? this.map.getZoom();
                 }
-            
+
                 if (this.formRestorationHiddenInput) {
                     this.formRestorationHiddenInput.value = JSON.stringify(coords);
                 }
@@ -311,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return JSON.parse(this.formRestorationHiddenInput.value);
                 return false;
             },
+            //sets the coordinates on the state from the map center.
             updateGeoJson: function() {
                 try {
                     const geoJsonData = {
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 center: layer.getLatLng(),
                                 radius: layer.getRadius()
                             };
-                            
+
                             geoJsonData.features.push({
                                 type: "Feature",
                                 properties: {
@@ -337,14 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                             });
                         } else {
-     
+
                             const layerGeoJson = layer.toGeoJSON();
                             geoJsonData.features.push(layerGeoJson);
                         }
                     });
 
-                    $wire.set(config.statePath, {
-                        ...$wire.get(config.statePath),
+                    $wire.set(this.config.statePath, {
                         lat: this.marker ? this.marker.getLatLng().lat : this.map.getCenter().lat,
                         lng: this.marker ? this.marker.getLatLng().lng : this.map.getCenter().lng,
                         geojson: geoJsonData
@@ -356,18 +355,21 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             getGeoJson: function() {
-                const state = $wire.get(config.statePath) ?? this.EntityState ??{};
+                const state = $wire.get(this.config.statePath) ??{};
                 return state.geojson;
             },
+
+            //Sets coordinates to marker position. (calls setCoordinates)
             updateLocation: function() {
+
                 let oldCoordinates = this.getCoordinates();
                 let currentCoordinates = this.map.getCenter();
                 if(config.clickable) {
                     currentCoordinates = this.marker.getLatLng();
                 }
 
-                const minChange = config.minChange || 0.00001; 
-                if (Math.abs(oldCoordinates.lng - currentCoordinates.lng) > minChange || 
+                const minChange = config.minChange || 0.00001;
+                if (Math.abs(oldCoordinates.lng - currentCoordinates.lng) > minChange ||
                     Math.abs(oldCoordinates.lat - currentCoordinates.lat) > minChange) {
                     this.setCoordinates(currentCoordinates);
                     this.setMarkerRange();
@@ -386,12 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.map = null;
             },
 
+            //gets coordinates from the state path.
             getCoordinates: function () {
-                if(state){
-                    return state;
-                }
-                
-                let location = $wire.get(config.statePath)  ?? {};
+
+                let location = this.getCoordsFromState();
 
                 const hasValidCoordinates = location.hasOwnProperty('lat') && location.hasOwnProperty('lng') &&
                     location.lat !== null && location.lng !== null;
@@ -406,32 +406,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 return location;
             },
 
-            setCoordinates: function (coords) {
+            getCoordsFromState: function() {
+                let stateVal = $wire.get(this.config.statePath);
+                if(typeof stateVal == 'string')
+                    stateVal = JSON.parse(stateVal);
+                if(stateVal!==null && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
+                    return stateVal;
+                return {}
+            },
 
-                if (this.marker && config.showMarker) {
-                    this.marker.setLatLng(coords);
-                }
+            //sets Coordinates and updates the state object
+            //causes livewire refresh if liveLocation.send true in config
+            setCoordinates: function (coords) {
                 this.setFormRestorationState(coords);
 
-                if (!this.debouncedUpdate) {
-                    this.debouncedUpdate = this.debounce((coords) => {
-                        if(config.type === 'field'){
-                            $wire.set(config.statePath, {
-                                ...$wire.get(config.statePath),
-                                lat: coords.lat,
-                                    lng: coords.lng
-                                });
-                        }
-
-                        if (config.liveLocation.send) {
-                            $wire.$refresh();
-                        }
-                        this.updateMarker();
-                    }, config.updateDelay || 500);
+                if(config.type === 'field'){
+                    $wire.set(config.statePath, {
+                        lat: coords.lat,
+                        lng: coords.lng
+                    });
                 }
 
-                this.debouncedUpdate(coords);
-                
+                if (this.config.liveLocation.send) {
+                    $wire.refresh();
+                }
                 return coords;
             },
 
@@ -482,52 +480,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.map.getContainer().appendChild(locationButton);
             },
 
-            setMarkerRange: function() {
+            setMarkerRange: function(coordinates) {
 
-                if ((config.clickable && !this.marker) || !this.rangeSelectField) {
+                if ((this.config.clickable && !this.marker) || !this.config.rangeSelectFieldStatePath) {
                     return;
                 }
-            
-                const distance = parseInt(this.rangeSelectField.value || 0);
-                const coordinates = this.getCoordinates();
+
+                const distance = parseInt($wire.get(this.rangeSelectFieldStatePath)  || 0);
+                if (!coordinates)
+                {
+                    coordinates = this.getCoordinates();
+                }
                 const circleStyle = {
                     color: 'blue',
                     fillColor: '#f03',
                     fillOpacity: 0.5,
                     radius: distance
                 };
-                
                 if (this.rangeCircle) {
-                    this.rangeCircle
-                        .setLatLng(coordinates)
-                        .setRadius(distance);
-                    return;
+                    this.rangeCircle.remove();
                 }
-                
                 this.rangeCircle = LF.circle(coordinates, circleStyle).addTo(this.map);
             },
 
             init: function() {
                 this.$wire = $wire;
                 this.config = config;
-                this.state = state;
-                this.EntityState = state;
-                
-                this.rangeSelectField = document.getElementById(config.rangeSelectField);
+                this.rangeSelectFieldStatePath = config.rangeSelectFieldStatePath;
                 this.initFormRestoration();
-
                 let that=this
-                if(this.rangeSelectField){
-                    this.rangeSelectField.addEventListener('change', function () {that.updateMarker(); });
-                }
                 $wire.on('refreshMap', this.refreshMap.bind(this));
+
+                $wire.watch(config.statePath, newVal => {
+                    if(typeof newVal == 'string')
+                        newVal=JSON.parse(newVal);
+                    that.updateMarker(newVal);
+                });
+
+                $wire.watch(config.rangeSelectFieldStatePath, newVal => {
+                    that.updateMarker();
+                });
             },
 
-            updateMarker: function() {
-                if (config.showMarker && this.marker) {
-                    this.marker.setLatLng(this.getCoordinates());
-                    this.setMarkerRange();
-                    this.updateLocation();
+            //sets Marker to Coordinate position.
+            updateMarker: function(coords) {
+                if (this.config.showMarker && this.marker) {
+                    if(!coords)
+                        coords = this.getCoordinates()
+                    if(coords.lat)
+                    {
+                        this.marker.setLatLng(coords);
+                        this.setMarkerRange(coords);
+                    }
                 }
             },
 

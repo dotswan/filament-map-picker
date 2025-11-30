@@ -100,13 +100,12 @@ class Map extends Field implements MapOptions
     public function getMapConfig(): string
     {
         $statePath = $this->getStatePath();
-        $mapId = $this->getId();
-        $lastDotPosition = mb_strrpos($mapId, '.');
-        $rangeSelectField = mb_substr($mapId, 0, $lastDotPosition + 1) . $this->mapConfig['rangeSelectField'];
+        $lastDotPosition = mb_strrpos($statePath, '.');
+        $rangeSelectFieldStatePath = mb_substr($statePath, 0, $lastDotPosition + 1) . $this->mapConfig['rangeSelectField'];
         return json_encode(
             array_merge($this->mapConfig, [
                 'statePath' => $statePath,
-                'rangeSelectField' => $rangeSelectField,
+                'rangeSelectFieldStatePath' => $rangeSelectFieldStatePath,
                 'controls' => array_merge($this->controls, $this->extraControls)
             ])
         );
@@ -163,7 +162,7 @@ class Map extends Field implements MapOptions
      */
     public function boundaries(Closure|bool $on, int|float $southWestLat = 0, int|float $southWestLng = 0, int|float $northEastLat = 0, int|float $northEastLng = 0): self
     {
-        if ( ! $this->evaluate($on)) {
+        if (! $this->evaluate($on)) {
             $this->mapConfig['bounds'] = false;
 
             return $this;
@@ -577,7 +576,7 @@ class Map extends Field implements MapOptions
         return $this;
     }
 
-      /**
+    /**
      * Set custom HTML for marker icon
      * @param string $html
      * @return $this

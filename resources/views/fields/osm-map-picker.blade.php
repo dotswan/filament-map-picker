@@ -7,13 +7,15 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-        <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
+    <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
             x-init="async () => {
             do {
                 await (new Promise(resolve => setTimeout(resolve, 100)));
             } while (!$refs.map);
             attach($refs.map);
-        }" wire:ignore>
+        }"
+            wire:ignore
+    >
         <div
             x-ref="map"
             class="w-full" style="min-height: 30vh; {{ $getExtraStyle() }}">
