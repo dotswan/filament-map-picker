@@ -154,6 +154,10 @@ document.addEventListener('livewire:init', () => {
                                     };
                                 }
 
+                                e.layer.on('pm:edit', () => {
+                                    this.updateGeoJson();
+                                });
+
                                 this.drawItems.addLayer(e.layer);
                                 this.updateGeoJson();
                             }
