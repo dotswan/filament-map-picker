@@ -411,7 +411,7 @@ document.addEventListener('livewire:init', () => {
                 let stateVal = $wire.get(this.config.statePath);
                 if (typeof stateVal == 'string')
                     stateVal = JSON.parse(stateVal);
-                if (stateVal !== null && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
+                if (stateVal !== null && stateVal !== undefined && typeof stateVal === 'object' && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
                     return stateVal;
                 return {}
             },
