@@ -98,8 +98,26 @@ class MapEntry extends Entry implements MapOptions
      */
     public function getMapConfig(): string
     {
+        $config = $this->mapConfig;
+
+        if (isset($config['defaultLatitude']) && $config['defaultLatitude'] instanceof Closure) {
+            $config['default']['lat'] = value($config['defaultLatitude'], ['record' => $this->getRecord()]);
+            unset($config['defaultLatitude']);
+        } elseif (isset($config['defaultLatitude'])) {
+            $config['default']['lat'] = $config['defaultLatitude'];
+            unset($config['defaultLatitude']);
+        }
+
+        if (isset($config['defaultLongitude']) && $config['defaultLongitude'] instanceof Closure) {
+            $config['default']['lng'] = value($config['defaultLongitude'], ['record' => $this->getRecord()]);
+            unset($config['defaultLongitude']);
+        } elseif (isset($config['defaultLongitude'])) {
+            $config['default']['lng'] = $config['defaultLongitude'];
+            unset($config['defaultLongitude']);
+        }
+
         return json_encode(
-            array_merge($this->mapConfig, [
+            array_merge($config, [
                 'statePath' => $this->getStatePath(),
                 'controls'  => array_merge($this->controls, $this->extraControls)
             ])
@@ -133,17 +151,8 @@ class MapEntry extends Entry implements MapOptions
 
     public function defaultLocation(int|float|Closure $latitude, float|int|Closure $longitude): self
     {
-        if ($latitude instanceof Closure) {
-            $this->mapConfig['default']['lat'] = value($latitude, ['record' => $this->getRecord()]);
-        } else {
-            $this->mapConfig['default']['lat'] = $latitude;
-        }
-
-        if ($longitude instanceof Closure) {
-            $this->mapConfig['default']['lng'] = value($longitude, ['record' => $this->getRecord()]);
-        } else {
-            $this->mapConfig['default']['lng'] = $longitude;
-        }
+        $this->mapConfig['defaultLatitude'] = $latitude;
+        $this->mapConfig['defaultLongitude'] = $longitude;
 
         return $this;
     }
