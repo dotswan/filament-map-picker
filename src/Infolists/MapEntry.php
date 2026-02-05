@@ -133,8 +133,17 @@ class MapEntry extends Entry implements MapOptions
 
     public function defaultLocation(int|float|Closure $latitude, float|int|Closure $longitude): self
     {
-        $this->mapConfig['default']['lat'] = $this->evaluate($latitude);
-        $this->mapConfig['default']['lng'] = $this->evaluate($longitude);
+        if ($latitude instanceof Closure) {
+            $this->mapConfig['default']['lat'] = value($latitude, ['record' => $this->getRecord()]);
+        } else {
+            $this->mapConfig['default']['lat'] = $latitude;
+        }
+
+        if ($longitude instanceof Closure) {
+            $this->mapConfig['default']['lng'] = value($longitude, ['record' => $this->getRecord()]);
+        } else {
+            $this->mapConfig['default']['lng'] = $longitude;
+        }
 
         return $this;
     }
