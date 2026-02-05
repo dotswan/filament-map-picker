@@ -65,7 +65,8 @@ class MapEntry extends Entry implements MapOptions
             'snapDistance'          =>  20,
             'drawText'              =>  true,
             'drawRectangle'         =>  true
-        ]
+        ],
+        'geojsonField'         => null
     ];
 
     /**
@@ -115,6 +116,17 @@ class MapEntry extends Entry implements MapOptions
         } elseif (isset($config['defaultLongitude'])) {
             $config['default']['lng'] = $config['defaultLongitude'];
             unset($config['defaultLongitude']);
+        }
+
+        if (isset($config['geojsonField']) && $config['geojsonField'] instanceof Closure) {
+            $geojsonData = call_user_func($config['geojsonField'], $record);
+            if ($geojsonData) {
+                $config['geojson'] = is_string($geojsonData) ? json_decode($geojsonData, true) : $geojsonData;
+            }
+            unset($config['geojsonField']);
+        } elseif (isset($config['geojsonField']) && $config['geojsonField']) {
+            $config['geojson'] = $config['geojsonField'];
+            unset($config['geojsonField']);
         }
 
         return json_encode(
@@ -635,6 +647,17 @@ class MapEntry extends Entry implements MapOptions
     public function markerIconAnchor(array $anchor): self
     {
         $this->mapConfig['markerIconAnchor'] = $anchor;
+        return $this;
+    }
+
+    /**
+     * Set geojson data from closure or value
+     * @param Closure|array|string|null $geojson
+     * @return $this
+     */
+    public function geojsonData(Closure|array|string|null $geojson): self
+    {
+        $this->mapConfig['geojsonField'] = $geojson;
         return $this;
     }
 

@@ -356,6 +356,9 @@ document.addEventListener('livewire:init', () => {
             },
 
             getGeoJson: function () {
+                if (config.geojson) {
+                    return config.geojson;
+                }
                 const state = $wire.get(this.config.statePath) ?? {};
                 return state.geojson;
             },

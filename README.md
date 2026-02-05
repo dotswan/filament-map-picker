@@ -383,8 +383,6 @@ public static function infolist(Infolist $infolist): Infolist
 
 #### Dynamic Coordinates with Closures
 
-The `defaultLocation()` method now supports closures, allowing you to dynamically set coordinates based on the record data:
-
 ```php
 MapEntry::make('location')
     ->defaultLocation(
@@ -393,38 +391,17 @@ MapEntry::make('location')
     )
 ```
 
-This is particularly useful when:
-- Displaying coordinates stored in custom database columns
-- Computing coordinates from related models
-- Applying transformations or default values
+#### Displaying GeoJSON Data
 
-#### Displaying GeoJSON Data (GeoMan Shapes)
-
-**Important:** Currently, the MapEntry infolist component does NOT automatically load GeoJSON data from separate database columns. The GeoJSON loading functionality in the JavaScript code (lines 183-260) only works when GeoJSON is stored within the same state path as the map field.
-
-**Current Limitation:**
 ```php
-// This WILL NOT automatically display GeoJSON from $record->geojson
 MapEntry::make('location')
     ->defaultLocation(
         latitude: fn ($record) => $record?->latitude ?? 0,
         longitude: fn ($record) => $record?->longitude ?? 0
     )
+    ->geojsonData(fn ($record) => $record?->geojson)
     ->geoMan(true)
-```
-
-**Workaround Required:**
-To display GeoJSON data stored in separate columns, you need to modify the blade template or create a custom component that passes the GeoJSON data through the state. This is a limitation that needs to be addressed in a future update.
-
-**For Form Fields (Works as Expected):**
-When using the Map field in forms with GeoMan enabled, it properly stores and retrieves GeoJSON:
-```php
-Map::make('location')
-    ->afterStateUpdated(function (Set $set, ?array $state): void {
-        $set('latitude', $state['lat'] ?? null);
-        $set('longitude', $state['lng'] ?? null);
-        $set('geojson', json_encode($state['geojson'] ?? null));
-    })
+    ->geoManEditable(false)
 ```
 
 Note: In infolist context, it's common to:
