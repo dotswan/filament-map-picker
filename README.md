@@ -398,9 +398,44 @@ This is particularly useful when:
 - Computing coordinates from related models
 - Applying transformations or default values
 
+#### Displaying GeoJSON Data
+
+If you have GeoJSON data stored (from using GeoMan drawing features), you can display it in the MapEntry. The GeoJSON data will be automatically loaded and rendered if it's stored in the record's field:
+
+```php
+MapEntry::make('location')
+    ->defaultLocation(
+        latitude: fn ($record) => $record?->latitude ?? 0,
+        longitude: fn ($record) => $record?->longitude ?? 0
+    )
+    ->geoMan(true)
+    ->geoManEditable(false) // Set to true if you want to allow editing in view mode
+```
+
+The MapEntry will automatically:
+- Load GeoJSON data from the state path
+- Render polygons, polylines, circles, and markers
+- Display them on the map with the configured colors
+- Allow editing if `geoManEditable(true)` is set
+
+**Note:** The GeoJSON data should be stored in the same field path that the MapEntry is using (e.g., if using `MapEntry::make('location')`, the GeoJSON should be accessible via `$record->location['geojson']`).
+
+For separate storage of coordinates and GeoJSON:
+```php
+// In your model
+protected $casts = [
+    'geojson' => 'array',
+];
+
+// In your migration
+$table->double('latitude')->nullable();
+$table->double('longitude')->nullable();
+$table->json('geojson')->nullable();
+```
+
 Note: In infolist context, it's common to:
 - Set `draggable(false)` since it's typically used for viewing only
-- Set `geoManEditable(false)` if GeoMan is enabled
+- Set `geoManEditable(false)` if GeoMan is enabled (unless you want to allow editing)
 - Use `defaultLocation()` with closures to load coordinates from the record
 - Adjust the height to be smaller than in forms (e.g., 50vh vs 150vh)
 
