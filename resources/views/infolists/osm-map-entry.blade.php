@@ -1,14 +1,6 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    @php
-        $state = $getState();
-        $config = json_decode($getMapConfig(), true);
-        if ($state && isset($state['lat']) && isset($state['lng'])) {
-            $config['default']['lat'] = $state['lat'];
-            $config['default']['lng'] = $state['lng'];
-        }
-    @endphp
 
-    <div x-data="mapPicker($wire, @js($config))" x-init="async () => {
+    <div x-data="mapPicker($wire, {{ $getMapConfig() }})" x-init="async () => {
         do {
             await (new Promise(resolve => setTimeout(resolve, 100)));
         } while (!$refs.map && !$refs.formRestorationInput);
