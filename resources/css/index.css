@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "../../node_modules/leaflet/dist/leaflet.css";
-@import "../../node_modules/leaflet-fullscreen/dist/leaflet.fullscreen.css";
+@import "../../node_modules/leaflet.fullscreen/Control.FullScreen.css";
 @import "../../node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 @source "../../resources/views/**/*.blade.php";
@@ -48,4 +48,8 @@
 .leaflet-bottom,
 .map-location-button {
     z-index: auto !important;
+}
+
+.leaflet-marker-icon {
+    z-index: 300 !important;
 }
