@@ -90,7 +90,7 @@ document.addEventListener('livewire:init', () => {
                 });
 
                 let location = this.getCoordinates();
-                if (!location.lat && !location.lng) {
+                if (!location.lat && !location.lng && config.liveLocation.send) {
                     this.map.locate({
                         setView: true,
                         maxZoom: config.controls.maxZoom,
