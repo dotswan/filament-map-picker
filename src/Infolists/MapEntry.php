@@ -99,9 +99,10 @@ class MapEntry extends Entry implements MapOptions
     public function getMapConfig(): string
     {
         $config = $this->mapConfig;
+        $record = $this->getRecord();
 
         if (isset($config['defaultLatitude']) && $config['defaultLatitude'] instanceof Closure) {
-            $config['default']['lat'] = value($config['defaultLatitude'], ['record' => $this->getRecord()]);
+            $config['default']['lat'] = call_user_func($config['defaultLatitude'], $record);
             unset($config['defaultLatitude']);
         } elseif (isset($config['defaultLatitude'])) {
             $config['default']['lat'] = $config['defaultLatitude'];
@@ -109,7 +110,7 @@ class MapEntry extends Entry implements MapOptions
         }
 
         if (isset($config['defaultLongitude']) && $config['defaultLongitude'] instanceof Closure) {
-            $config['default']['lng'] = value($config['defaultLongitude'], ['record' => $this->getRecord()]);
+            $config['default']['lng'] = call_user_func($config['defaultLongitude'], $record);
             unset($config['defaultLongitude']);
         } elseif (isset($config['defaultLongitude'])) {
             $config['default']['lng'] = $config['defaultLongitude'];
