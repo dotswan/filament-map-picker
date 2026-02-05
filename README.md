@@ -398,39 +398,33 @@ This is particularly useful when:
 - Computing coordinates from related models
 - Applying transformations or default values
 
-#### Displaying GeoJSON Data
+#### Displaying GeoJSON Data (GeoMan Shapes)
 
-If you have GeoJSON data stored (from using GeoMan drawing features), you can display it in the MapEntry. The GeoJSON data will be automatically loaded and rendered if it's stored in the record's field:
+**Important:** Currently, the MapEntry infolist component does NOT automatically load GeoJSON data from separate database columns. The GeoJSON loading functionality in the JavaScript code (lines 183-260) only works when GeoJSON is stored within the same state path as the map field.
 
+**Current Limitation:**
 ```php
+// This WILL NOT automatically display GeoJSON from $record->geojson
 MapEntry::make('location')
     ->defaultLocation(
         latitude: fn ($record) => $record?->latitude ?? 0,
         longitude: fn ($record) => $record?->longitude ?? 0
     )
     ->geoMan(true)
-    ->geoManEditable(false) // Set to true if you want to allow editing in view mode
 ```
 
-The MapEntry will automatically:
-- Load GeoJSON data from the state path
-- Render polygons, polylines, circles, and markers
-- Display them on the map with the configured colors
-- Allow editing if `geoManEditable(true)` is set
+**Workaround Required:**
+To display GeoJSON data stored in separate columns, you need to modify the blade template or create a custom component that passes the GeoJSON data through the state. This is a limitation that needs to be addressed in a future update.
 
-**Note:** The GeoJSON data should be stored in the same field path that the MapEntry is using (e.g., if using `MapEntry::make('location')`, the GeoJSON should be accessible via `$record->location['geojson']`).
-
-For separate storage of coordinates and GeoJSON:
+**For Form Fields (Works as Expected):**
+When using the Map field in forms with GeoMan enabled, it properly stores and retrieves GeoJSON:
 ```php
-// In your model
-protected $casts = [
-    'geojson' => 'array',
-];
-
-// In your migration
-$table->double('latitude')->nullable();
-$table->double('longitude')->nullable();
-$table->json('geojson')->nullable();
+Map::make('location')
+    ->afterStateUpdated(function (Set $set, ?array $state): void {
+        $set('latitude', $state['lat'] ?? null);
+        $set('longitude', $state['lng'] ?? null);
+        $set('geojson', json_encode($state['geojson'] ?? null));
+    })
 ```
 
 Note: In infolist context, it's common to:
