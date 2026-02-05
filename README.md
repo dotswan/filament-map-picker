@@ -333,9 +333,14 @@ public static function infolist(Infolist $infolist): Infolist
     return $infolist
         ->schema([
             MapEntry::make('location')
+                // Dynamic Location from Record
+                ->defaultLocation(
+                    latitude: fn ($record) => $record?->latitude ?? 0,
+                    longitude: fn ($record) => $record?->longitude ?? 0
+                )
+                
                 // Basic Configuration
-                ->defaultLocation(latitude: 40.4168, longitude: -3.7038)
-                ->draggable(false) // Usually false for infolist view
+                ->draggable(false)
                 ->zoom(15)
                 ->minZoom(0)
                 ->maxZoom(28)
@@ -357,7 +362,7 @@ public static function infolist(Infolist $infolist): Infolist
                 
                 // GeoMan Integration (if needed for viewing)
                 ->geoMan(true)
-                ->geoManEditable(false) // Usually false for infolist view
+                ->geoManEditable(false)
                 ->geoManPosition('topleft')
                 ->drawCircleMarker(true)
                 ->drawMarker(true)
@@ -370,23 +375,39 @@ public static function infolist(Infolist $infolist): Infolist
                 // Styling
                 ->extraStyles([
                     'min-height: 50vh',
-                    'border-radius: 50px'
-                ])
-                
-                // State Management
-                ->state(fn ($record) => [
-                    'lat' => $record?->latitude,
-                    'lng' => $record?->longitude,
-                    'geojson' => $record?->geojson ? json_decode($record->geojson) : null
+                    'border-radius: 8px'
                 ])
         ]);
 }
 ```
 
+#### Dynamic Coordinates with Closures
+
+```php
+MapEntry::make('location')
+    ->defaultLocation(
+        latitude: fn ($record) => $record?->latitude ?? 0,
+        longitude: fn ($record) => $record?->longitude ?? 0
+    )
+```
+
+#### Displaying GeoJSON Data
+
+```php
+MapEntry::make('location')
+    ->defaultLocation(
+        latitude: fn ($record) => $record?->latitude ?? 0,
+        longitude: fn ($record) => $record?->longitude ?? 0
+    )
+    ->geojsonData(fn ($record) => $record?->geojson)
+    ->geoMan(true)
+    ->geoManEditable(false)
+```
+
 Note: In infolist context, it's common to:
 - Set `draggable(false)` since it's typically used for viewing only
-- Set `geoManEditable(false)` if GeoMan is enabled
-- Use `state()` instead of `afterStateHydrated()`/`afterStateUpdated()`
+- Set `geoManEditable(false)` if GeoMan is enabled (unless you want to allow editing)
+- Use `defaultLocation()` with closures to load coordinates from the record
 - Adjust the height to be smaller than in forms (e.g., 50vh vs 150vh)
 
 ## Usage Guide for Handling Map Locations

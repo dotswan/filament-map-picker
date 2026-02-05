@@ -65,7 +65,8 @@ class MapEntry extends Entry implements MapOptions
             'snapDistance'          =>  20,
             'drawText'              =>  true,
             'drawRectangle'         =>  true
-        ]
+        ],
+        'geojsonField'         => null
     ];
 
     /**
@@ -98,8 +99,38 @@ class MapEntry extends Entry implements MapOptions
      */
     public function getMapConfig(): string
     {
+        $config = $this->mapConfig;
+        $record = $this->getRecord();
+
+        if (isset($config['defaultLatitude']) && $config['defaultLatitude'] instanceof Closure) {
+            $config['default']['lat'] = call_user_func($config['defaultLatitude'], $record);
+            unset($config['defaultLatitude']);
+        } elseif (isset($config['defaultLatitude'])) {
+            $config['default']['lat'] = $config['defaultLatitude'];
+            unset($config['defaultLatitude']);
+        }
+
+        if (isset($config['defaultLongitude']) && $config['defaultLongitude'] instanceof Closure) {
+            $config['default']['lng'] = call_user_func($config['defaultLongitude'], $record);
+            unset($config['defaultLongitude']);
+        } elseif (isset($config['defaultLongitude'])) {
+            $config['default']['lng'] = $config['defaultLongitude'];
+            unset($config['defaultLongitude']);
+        }
+
+        if (isset($config['geojsonField']) && $config['geojsonField'] instanceof Closure) {
+            $geojsonData = call_user_func($config['geojsonField'], $record);
+            if ($geojsonData) {
+                $config['geojson'] = is_string($geojsonData) ? json_decode($geojsonData, true) : $geojsonData;
+            }
+            unset($config['geojsonField']);
+        } elseif (isset($config['geojsonField']) && $config['geojsonField']) {
+            $config['geojson'] = $config['geojsonField'];
+            unset($config['geojsonField']);
+        }
+
         return json_encode(
-            array_merge($this->mapConfig, [
+            array_merge($config, [
                 'statePath' => $this->getStatePath(),
                 'controls'  => array_merge($this->controls, $this->extraControls)
             ])
@@ -131,10 +162,10 @@ class MapEntry extends Entry implements MapOptions
 
 
 
-    public function defaultLocation(int|float $latitude, float|int $longitude): self
+    public function defaultLocation(int|float|Closure $latitude, float|int|Closure $longitude): self
     {
-        $this->mapConfig['default']['lat'] = $latitude;
-        $this->mapConfig['default']['lng'] = $longitude;
+        $this->mapConfig['defaultLatitude'] = $latitude;
+        $this->mapConfig['defaultLongitude'] = $longitude;
 
         return $this;
     }
@@ -616,6 +647,17 @@ class MapEntry extends Entry implements MapOptions
     public function markerIconAnchor(array $anchor): self
     {
         $this->mapConfig['markerIconAnchor'] = $anchor;
+        return $this;
+    }
+
+    /**
+     * Set geojson data from closure or value
+     * @param Closure|array|string|null $geojson
+     * @return $this
+     */
+    public function geojsonData(Closure|array|string|null $geojson): self
+    {
+        $this->mapConfig['geojsonField'] = $geojson;
         return $this;
     }
 
