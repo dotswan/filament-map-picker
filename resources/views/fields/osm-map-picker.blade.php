@@ -1,11 +1,6 @@
-<x-filament-forms::field-wrapper
-    :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isLabelHidden()"
-    {{-- :helper-text="$getHelperText()" --}}
-    :hint="$getHint()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
 >
     <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
             x-init="async () => {
@@ -22,4 +17,5 @@
         </div>
         <input type="text" id="{{ $getStatePath() }}_fmrest" style="display:none"/>
     </div>
-</x-filament-forms::field-wrapper>
+</x-dynamic-component>
+
