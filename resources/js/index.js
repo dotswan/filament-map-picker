@@ -4,7 +4,7 @@ import "@geoman-io/leaflet-geoman-free";
 
 
 document.addEventListener('livewire:init', () => {
-    const mapPicker = ($wire, config) => {
+    const mapPicker = ($wire, config, state) => {
         return {
             map: null,
             tile: null,
@@ -14,6 +14,7 @@ document.addEventListener('livewire:init', () => {
             rangeSelectFieldStatePath: null,
             formRestorationHiddenInput: null,
             debouncedUpdate: null,
+            state: state,
 
             debounce: function (func, wait) {
                 let timeout;
@@ -43,7 +44,11 @@ document.addEventListener('livewire:init', () => {
                     });
                 }
                 this.map.on('load', () => {
-                    setTimeout(() => this.map.invalidateSize(true), 0);
+                    setTimeout(() => {
+                        if (this.map) {
+                            this.map.invalidateSize(true);
+                        }
+                    }, 0);
 
                     if (config.showMarker && !config.clickable) {
                         this.marker.setLatLng(this.map.getCenter());
@@ -344,11 +349,11 @@ document.addEventListener('livewire:init', () => {
                         }
                     });
 
-                    $wire.set(this.config.statePath, {
+                    this.state = {
                         lat: this.marker ? this.marker.getLatLng().lat : this.map.getCenter().lat,
                         lng: this.marker ? this.marker.getLatLng().lng : this.map.getCenter().lng,
                         geojson: geoJsonData
-                    }, true);
+                    };
 
                 } catch (error) {
                     console.error("Error updating GeoJSON:", error);
@@ -359,7 +364,7 @@ document.addEventListener('livewire:init', () => {
                 if (config.geojson) {
                     return config.geojson;
                 }
-                const state = $wire.get(this.config.statePath) ?? {};
+                const state = this.state ?? {};
                 return state.geojson;
             },
 
@@ -411,7 +416,7 @@ document.addEventListener('livewire:init', () => {
             },
 
             getCoordsFromState: function () {
-                let stateVal = $wire.get(this.config.statePath);
+                let stateVal = this.state;
                 if (typeof stateVal == 'string')
                     stateVal = JSON.parse(stateVal);
                 if (stateVal !== null && stateVal !== undefined && typeof stateVal === 'object' && stateVal.hasOwnProperty('lat') && stateVal.hasOwnProperty('lng'))
@@ -425,10 +430,10 @@ document.addEventListener('livewire:init', () => {
                 this.setFormRestorationState(coords);
 
                 if (config.type === 'field') {
-                    $wire.set(config.statePath, {
+                    this.state = {
                         lat: coords.lat,
                         lng: coords.lng
-                    });
+                    };
                 }
 
                 if (this.config.liveLocation.send) {
@@ -514,7 +519,7 @@ document.addEventListener('livewire:init', () => {
                 let that = this
                 $wire.on('refreshMap', this.refreshMap.bind(this));
 
-                $wire.watch(config.statePath, newVal => {
+                this.$watch('state', newVal => {
                     if (typeof newVal == 'string')
                         newVal = JSON.parse(newVal);
                     that.updateMarker(newVal);

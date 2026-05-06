@@ -2,7 +2,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <div x-data="mapPicker($wire, {{ $getMapConfig() }})"
+    <div x-data="mapPicker($wire, {{ $getMapConfig() }}, $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} )"
             x-init="async () => {
             do {
                 await (new Promise(resolve => setTimeout(resolve, 100)));
