@@ -445,16 +445,22 @@ document.addEventListener('livewire:init', () => {
                 const observer = new IntersectionObserver(entries => {
                     entries.forEach(entry => {
                         if (entry.intersectionRatio > 0) {
-                            if (!this.map)
+                            if (!this.map) {
                                 this.createMap(el);
-                        } else {
+                            } else {
+                                // The container may have been resized while hidden (e.g. in an inactive tab)
+                                this.map.invalidateSize();
+                            }
+                        } else if (this.map) {
                             this.removeMap(el);
                         }
                     });
                 }, {
                     root: null,
                     rootMargin: '0px',
-                    threshold: 1.0
+                    // Show the map as soon as part of it is visible: with 1.0, a map that is only partly
+                    // visible (e.g. after switching tabs, or taller than the viewport) stayed blank
+                    threshold: 0.01
                 });
                 observer.observe(el);
             },
